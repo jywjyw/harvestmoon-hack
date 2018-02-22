@@ -1,12 +1,15 @@
 package common;
 
 
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -122,6 +125,7 @@ public class Util {
 	}
 	
 	public static int hiloShort(int i) {
+		if(i>0xffff) throw new UnsupportedOperationException();
 		return i>>>8&0xff|i<<8&0xff00;
 	}
 	
@@ -293,5 +297,33 @@ public class Util {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public static String readTxt(String filename){
+		try {
+			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+			BufferedReader br = new BufferedReader(new InputStreamReader(is, "utf-8"));
+			StringBuilder sb = new StringBuilder();
+			String line=null;
+			while((line=br.readLine())!=null){
+				sb.append(line);
+			}
+			is.close();
+			return sb.toString();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public static void saveFile(byte[] data, String file){
+		try {
+			FileOutputStream fos = new FileOutputStream(file);
+			fos.write(data);
+			fos.flush();
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 }
