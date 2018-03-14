@@ -25,7 +25,7 @@ public class ScriptMultilineExporter implements ScriptReader.Callback{
 		BinSplitPacker bin = BinSplitPacker.newInstance();
 		bin.split(Conf.bin);
 		byte[] bs = new ScriptMultilineExporter().exportExcel(bin, new CharTable("japan.tbl"));
-		Util.saveFile(bs, "C:\\Users\\me\\Desktop\\japan.xlsx");
+		Util.saveFile(bs, "C:\\Users\\administrator\\Desktop\\japan.xlsx");
 		bin.dispose();
 	}
 	

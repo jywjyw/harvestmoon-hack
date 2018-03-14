@@ -9,8 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 
-import toy.hack.FontData;
-import toy.util.Util;
+import common.Util;
 
 public class FixedCharModel {
 	
