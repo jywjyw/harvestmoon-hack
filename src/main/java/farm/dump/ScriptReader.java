@@ -5,7 +5,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import common.Util;
-import farm.CharTable;
+import farm.Charset;
 
 /**
  * 读取ROM中的文本区
@@ -22,7 +22,7 @@ public class ScriptReader {
 		void every2Bytes(int index, String char_, int unsignedShort, boolean isCtrl);	
 	}
 	
-	public static void readUntilFFFF(byte[] script, CharTable charTable, Callback c){
+	public static void readUntilFFFF(byte[] script, Charset charTable, Callback c){
 		DataInputStream dis = new DataInputStream(new ByteArrayInputStream(script));
 		int buf=0,index=0;
 		try {
@@ -43,7 +43,7 @@ public class ScriptReader {
 		Util.close(dis);
 	}
 	
-	public static String readUntilFFFF(byte[] script, CharTable charTable)  {
+	public static String readUntilFFFF(byte[] script, Charset charTable)  {
 		StringBuilder ret = new StringBuilder();
 		readUntilFFFF(script, charTable, new Callback() {
 			@Override

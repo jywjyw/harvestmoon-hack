@@ -1,239 +1,90 @@
 package common;
 
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+
 
 public class Util {
 	
-//	public static List<byte[]> rebuild(File textFile,
-//			int pointerCount, long textStartPos, long textEndPos) throws Exception {
-//		
-//		CharTable charTable = new CharTable();
-//		Element xml = new SAXReader().read(textFile).getRootElement();
-//		if(xml.elements().size()!=pointerCount) throw new RuntimeException();
-//		List<byte[]> textArray = new ArrayList<>();
-//		Set<String> illegalChar = new LinkedHashSet<>();
-//		ByteBuffer buf = ByteBuffer.allocate(50000);
-//		for(int i=1;i<=pointerCount;i++) {
-//			Element e = xml.element("_"+i);
-//			String chinese = e.elementTextTrim("chinese");
-//			DataInputStream is =null;
-//			try {
-//				is = new DataInputStream(new ByteArrayInputStream(chinese.getBytes("gbk")));
-//			} catch (UnsupportedEncodingException e3) {}
-//			
-//			StringBuilder specialChar = null;
-//			int mode = 0; //0=normal, 控制符=1, 特殊字=2;
-//			while(true) {
-//				try {
-//					byte b = is.readByte();
-//					if(mode==1) {
-//						specialChar.append((char)b);
-//						if(b=='}') {
-//							CtrlChar.toBytes(buf, specialChar.toString());
-//							mode=0;
-//						}
-//					} else if(mode==2){
-//						specialChar.append((char)b);
-//						if(b==']') {
-//							Integer code = charTable.getCode(specialChar.toString());
-//							if(code==null)System.out.println(specialChar.toString());
-//							buf.putShort(code.shortValue());
-//							mode=0;
-//						}
-//					} else {
-//						if(b=='{') {
-//							mode=1;
-//							specialChar=new StringBuilder();
-//							specialChar.append((char)b);
-//						} else if(b=='['){
-//							mode=2;
-//							specialChar=new StringBuilder();
-//							specialChar.append((char)b);
-//						} else {
-//							String char_ = null;
-//							if(b>=0&&b<=0x7f) {
-//								char_ = String.valueOf((char)b);
-//							} else {
-//								char_ = new String(new byte[]{b, is.readByte()}, "gbk");
-//							}
-//							Integer code = charTable.getCode(char_);
-//							if(code!=null) {
-//								buf.putShort(code.shortValue());
-//							} else {
-//								illegalChar.add(char_);
-//							}
-//						}
-//					}
-//				} catch(EOFException e1) {
-//					break;
-//				} catch(IOException e2) {
-//					break;
-//				}
-//			}
-//			
-//			byte[] bytes = Arrays.copyOf(buf.array(), buf.position());
-////			System.out.println(chinese);
-////			for(byte b : bytes) {
-////				System.out.printf("%02X ", b);
-////			}
-////			System.out.println();
-//			textArray.add(bytes);
-//			buf.clear();
-//			buf.position(0);
-//		}
-//		if(!illegalChar.isEmpty()) {
-//			throw new RuntimeException(illegalChar.size()+" illegal char="+show(illegalChar));
-//		}
-//		if(textArray.size()!=pointerCount) {
-//			throw new RuntimeException("not eq pointer size");
-//		}
-//		//TODO warning:剧情对话中,每个01f0后的字符数<=15. 要统计每个字用了多少次，作排名。
-//		
-//		
-//		long totalLen = 0;
-//		for(byte[] bs : textArray) {
-//			totalLen+=bs.length;
-//		}
-//		if(totalLen>textEndPos-textStartPos) {
-//			throw new RuntimeException("too long");
-//		} 
-//		return textArray;
-//		
-//	}
-	
-	public static int hilo(int i) {
-		return i>>>24|i>>>8&0xff00|i<<8&0xff0000|i<<24&0xff000000;
-	}
-	
-	public static int hiloShort(int i) {
-		if(i>0xffff) throw new UnsupportedOperationException();
-		return i>>>8&0xff|i<<8&0xff00;
-	}
-	
-	private static String show(Set<String> set) {
-		StringBuilder sb = new StringBuilder();
-		for(String s : set) {
-			sb.append(s+" ");
+	public static String md5(File file) {  
+    	InputStream fis = null;  
+    	byte[] buf = new byte[1024];  
+    	int len = 0;  
+    	char[] hex = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};  
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			fis = new FileInputStream(file);  
+			while ((len = fis.read(buf)) > 0) {  
+			    md.update(buf, 0, len);  
+			}  
+			byte[] bytes = md.digest();
+			StringBuffer sb = new StringBuffer(2 * bytes.length);  
+	        for (int i = 0; i < bytes.length; i++) {  
+	            char c0 = hex[(bytes[i] & 0xf0) >> 4];// 取字节中高 4 位的数字转换  
+	            // 为逻辑右移，将符号位一起右移,此处未发现两种符号有何不同  
+	            char c1 = hex[bytes[i] & 0xf];// 取字节中低 4 位的数字转换  
+	            sb.append(c0).append(c1);  
+	        }  
+	        return sb.toString();  
+        } catch (Exception e1) {
+        	throw new RuntimeException(e1);
+		} finally	{
+			try {
+				if(fis != null)	fis.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-		return sb.toString();
+    }  
+	
+	public static String md5(byte[] cont){  
+	   return hexEncode(md5bytes(cont));
 	}
 	
-	/** 
-	 * MD5加密
-	 * @param cont 要加密的字节数组 
-	 * @return    加密后的字符串 
-	 */  
-	public static String toMd5(byte[] cont){  
-	    try {  
+	public static byte[] md5bytes(byte[] cont){
+		try {  
 	        MessageDigest md = MessageDigest.getInstance("MD5");  
 	        md.update(cont);  
-	        byte[] byteDigest = md.digest();  
-	        int i;  
-	        StringBuilder buf = new StringBuilder();  
-	        for (int offset = 0; offset < byteDigest.length; offset++) {  
-	            i = byteDigest[offset];  
-	            if (i < 0)  i += 256;  
-	            if (i < 16) buf.append("0"); 
-	            buf.append(Integer.toHexString(i));
-	        }
-//	        return buf.toString().substring(8, 24);		//16位加密     
-	        return buf.toString();						//32位加密    
+	        return md.digest();  
 	    } catch (NoSuchAlgorithmException e) {  
 	        throw new RuntimeException(e); 
 		}
 	}
 	
-	/**
-	 * 把request.getParameterMap()转成字符串, 适用于查看POST参数
-	 * @param paramMap
-	 * @param charset 是否要把参数urlencode
-	 * @return
-	 */
-	public static String paramMapToString(Map paramMap, String charset)	{
-		if(paramMap.size() == 0)	return "";
-		StringBuilder sb = new StringBuilder();
-		for(Object o : paramMap.entrySet())	{
-			Entry e = (Entry)o;
-			if(e.getValue() instanceof String[])	{
-				for(String val : (String[])e.getValue())	{
-					if(charset != null)	{
-						try {
-							val = URLEncoder.encode(val, charset);
-						} catch (UnsupportedEncodingException e1) {
-							e1.printStackTrace();
-						}
-					}
-					sb.append(e.getKey()).append("=").append(val).append("&");
-				}
-			} else {
-				String value = (String)e.getValue();
-				if(charset != null)	{
-					try {
-						value = URLEncoder.encode(value, charset);
-					} catch (UnsupportedEncodingException e1) {
-						e1.printStackTrace();
-					}
-				}
-				sb.append(e.getKey()).append("=").append(value).append("&");
-			}
-		}
-		if(sb.toString().endsWith("&"))	{
-			sb.deleteCharAt(sb.length()-1);
-		}
-		return sb.toString();
+	
+	public static int hilo(int i) {
+		return i>>>24|i>>>8&0xff00|i<<8&0xff0000|i<<24&0xff000000;
 	}
 	
-	public static String join(List<String> list, String splitter)	{
-		return join(list, splitter, null);
+	public static int hiloShort(int unsignedShort) {
+		return unsignedShort>>>8&0xff|unsignedShort<<8&0xff00;
 	}
 	
-	/**
-	 * 将字符串集合分隔拼接成一条字符串
-	 * @param list 集合
-	 * @param splitter 分隔符
-	 * @param replacement 将与分隔符有冲突的字符串替换
-	 * @return
-	 */
-	public static String join(List<String> list, String splitter, String replacement)	{
-		StringBuilder sb = new StringBuilder();
-		for(int i=0; i<list.size(); i++)	{
-			if(replacement != null && list.get(i) != null)	{
-				sb.append(list.get(i).replace(splitter, replacement));
-			} else	{
-				sb.append(list.get(i));
-			}
-			if(i < list.size() - 1)	{
-				sb.append(splitter);
-			}
-		}
-		return sb.toString();
+	public static int toInt(byte a, byte b) {
+		return (a&0xff)<<8|b&0xff;
 	}
 	
-	public static String toHexString(byte[] bs) {
-		StringBuilder sb = new StringBuilder();
-		for(int i=0;i<bs.length;i++) {
-			sb.append(String.format("%02X", bs[i]&0xff));
-		}
-		return sb.toString();
+	public static int toInt(byte a, byte b, byte c, byte d) {
+		return ((a&0xff) << 24) | ((b&0xff) << 16) | ((c&0xff) << 8) | (d&0xff);
+	}
+	
+	public static byte[] toBytes(int i){
+		return new byte[]{
+			(byte)(i>>>24),(byte)(i>>>16),(byte)(i>>>8),(byte)i
+		};
 	}
 	
 	/**
@@ -276,6 +127,17 @@ public class Util {
 		}
 	}
 	
+	public static byte[] loadFile(File file) throws IOException{
+		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		byte[] buf = new byte[1024];
+		int len;
+		while((len=bis.read(buf))!=-1){
+			bos.write(buf, 0, len);
+		}
+		return bos.toByteArray();
+	}
+	
 	
 	public static void overwriteFile(String file, long startPos, byte[] data) {
 		try {
@@ -298,32 +160,121 @@ public class Util {
 		}
 	}
 	
-	public static String readTxt(String filename){
+	public static void appendToFileTail(RandomAccessFile parent, File child) throws IOException{
+		byte[] buf = new byte[1024];
+		int len=0;
+		FileInputStream fis=null;
 		try {
-			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
-			BufferedReader br = new BufferedReader(new InputStreamReader(is, "utf-8"));
-			StringBuilder sb = new StringBuilder();
-			String line=null;
-			while((line=br.readLine())!=null){
-				sb.append(line);
+			fis = new FileInputStream(child);
+			while((len=fis.read(buf))!=-1){
+				parent.write(buf, 0, len);
 			}
-			is.close();
-			return sb.toString();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		} finally{
+			Util.close(fis);
 		}
 	}
 	
-	public static void saveFile(byte[] data, String file){
-		try {
-			FileOutputStream fos = new FileOutputStream(file);
-			fos.write(data);
-			fos.flush();
-			fos.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+	//contains dot
+	public static String getSuffix(String filename) {
+		if(filename == null)	return null;
+		int dot = filename.lastIndexOf('.');
+		return dot == -1 ? "" : filename.substring(dot);
+	}
+	
+	public static void mkdirs(File file){
+		if(!file.getParentFile().exists())
+			file.getParentFile().mkdirs();
+	}
+	
+	public static int get0x800Multiple(int len){
+		if(len%0x800==0){
+			return len;
+		} else{
+			return (len/0x800+1)*0x800;
+		}
+	}
+	public static int get0x800MultipleDiff(int len){
+		int remainder=len%0x800;
+		if(remainder==0){	
+			return 0;
+		} else{
+			return 0x800-remainder;
 		}
 	}
 	
+    public static String hexEncode(byte[] bs) {   
+        StringBuilder ret = new StringBuilder(bs.length*2);
+        String tmp=null;
+        for(byte b:bs){
+        	tmp=Integer.toHexString(b&0xff);//don't use String.format(), too slow
+        	if(tmp.length()==1) ret.append("0");
+        	ret.append(tmp);
+        }
+        return ret.toString();
+    }
+    
+    public static byte[] decodeHex(String hex) {
+    	hex=hex.replace(" ", "");
+    	if(hex.length()%2!=0) 
+    		throw new UnsupportedOperationException("hex length must be even number : "+hex);
+    	int len = hex.length()/2;
+        byte[] ret = new byte[len];
+        for (int i=0; i<len; i++) {  
+            ret[i] = (byte)Integer.parseInt(hex.substring(i*2, i*2+2),16);  
+        }  
+        return ret;
+    }  
+
+	public static boolean isNotEmpty(String s) {
+		return s!=null && s.length()>0;
+	}
+	
+	public static void assertTrue(boolean b){
+		if(!b)throw new RuntimeException();
+	}
+	
+	public static void reverseArray(byte[] data){
+		for (int left = 0, right = data.length - 1; left < right; left++, right--) {
+	        byte temp = data[left];
+	        data[left]  = data[right];
+	        data[right] = temp;
+	    }
+	}
+	
+	public static String join(List<String> list, String splitter, String replacement)	{
+		StringBuilder sb = new StringBuilder();
+		for(int i=0; i<list.size(); i++)	{
+			if(replacement != null && list.get(i) != null)	{
+				sb.append(list.get(i).replace(splitter, replacement));
+			} else	{
+				sb.append(list.get(i));
+			}
+			if(i < list.size() - 1)	{
+				sb.append(splitter);
+			}
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * 将String数组转换为Int数组
+	 * @param s
+	 * @return
+	 */
+	public static int[] toIntArray(String[] s)	{
+		int[] ints = new int[s.length];
+		for(int i=0; i<s.length; i++)	{
+			ints[i] = Integer.parseInt(s[i]);
+		}
+		return ints;
+	}
+	
+	public static void printGBK() throws UnsupportedEncodingException {
+		for(int a=0xb0;a<=0xf7;a++){
+			for(int b=0xa1;b<=0xfe;b++){
+				System.out.println(new String(new byte[]{(byte) a,(byte) b},"gbk"));
+			}
+		}
+	}
 	
 }

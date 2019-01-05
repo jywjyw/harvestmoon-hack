@@ -11,7 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import common.Conf;
-import farm.CharTable;
+import farm.Charset;
 
 public class ScriptInlineExporter {
 	
@@ -21,7 +21,7 @@ public class ScriptInlineExporter {
 	}
 	
 	public static void export(String tbl, String dir) throws IOException {
-		CharTable table = new CharTable(tbl);
+		Charset table = new Charset(tbl);
 		int unknownData = 0x1800;
 		int group = unknownData+Conf.SECTOR;
 		XSSFWorkbook book = new XSSFWorkbook();
