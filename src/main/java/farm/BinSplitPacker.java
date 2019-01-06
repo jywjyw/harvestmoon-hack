@@ -15,30 +15,16 @@ import common.Util;
 public class BinSplitPacker {
 	
 	public static void main(String[] args) throws IOException {
-		String dir = "C:\\Users\\me\\Desktop\\farm-jp\\";
-		new BinSplitPacker(dir).split(dir+File.separator+"A_FILE.bin");
-	}
-	
-	public static BinSplitPacker newInstance(){
-		String splitDir = System.getProperty("java.io.tmpdir");
-		if(!splitDir.endsWith(File.separator))
-			splitDir+=File.separator;
-		splitDir+="harvest"+File.separator;
-		return new BinSplitPacker(splitDir);
+		new BinSplitPacker().split(Conf.boyjpdir, Conf.desktop+"boyjp\\");
 	}
 	
 	private List<File> splitFiles = new ArrayList<>();
-	private String splitDir;
 	
-	public BinSplitPacker(String splitDir) {
-		this.splitDir = splitDir;
-	}
 
-	public void split(String bin) throws IOException{
+	public void split(String binDir, String splitDir) throws IOException{
 		File splitDir_ = new File(splitDir);
 		if(!splitDir_.exists()) splitDir_.mkdirs();
-		String parentDir = new File(bin).getParent()+File.separator;
-		RandomAccessFile hdt = new RandomAccessFile(new File(parentDir+"A_FILE.HDT"), "r");
+		RandomAccessFile hdt = new RandomAccessFile(binDir+Conf.HDT, "r");
 		
 		List<Integer> addrs = new ArrayList<>();
 		try {
@@ -50,7 +36,7 @@ public class BinSplitPacker {
 		}
 		hdt.close();
 		
-		RandomAccessFile binFile = new RandomAccessFile(new File(bin), "r");
+		RandomAccessFile binFile = new RandomAccessFile(new File(binDir+Conf.BIN), "r");
 		for(int i=0;i<addrs.size()-1;i++){	//最后一个是文件边界
 			binFile.seek(addrs.get(i));
 			int len=addrs.get(i+1)-addrs.get(i);
@@ -71,8 +57,8 @@ public class BinSplitPacker {
 		return splitFiles.get(index);
 	}
 	
-	public void pack(String targetBin) throws IOException{
-		FileOutputStream bin = new FileOutputStream(targetBin);
+	public void pack(String splitDir, String outDir) throws IOException{
+		FileOutputStream bin = new FileOutputStream(outDir+Conf.BIN);
 		byte[] buf = new byte[1024];
 		int len=0;
 		for(File f : splitFiles){
@@ -84,32 +70,17 @@ public class BinSplitPacker {
 		}
 		bin.close();
 		
-		String parentDir = new File(targetBin).getParent()+File.separator;
-		FileOutputStream hdt = new FileOutputStream(parentDir+"A_FILE.HDT");
-		hdt.write(buildHDT());
-		hdt.close();
-	}
-	
-	public void dispose(){
-		for(File f : splitFiles){
-			f.delete();
-		}
-		new File(splitDir).delete();
-	}
-	
-	
-	public String getSplitDir(){
-		return splitDir;
-	}
-	
-	private byte[] buildHDT(){
-		ByteBuffer buf = ByteBuffer.allocate((splitFiles.size()+1)*4);
-		buf.putInt(0);
+		
+		FileOutputStream hdt = new FileOutputStream(outDir+Conf.HDT);
+		ByteBuffer hdtDat = ByteBuffer.allocate((splitFiles.size()+1)*4);
+		hdtDat.putInt(0);
 		long addr=0;
 		for(File f:splitFiles){
 			addr+=f.length();
-			buf.putInt(Util.hilo((int)addr));
+			hdtDat.putInt(Util.hilo((int)addr));
 		}
-		return buf.array();
+		hdt.write(hdtDat.array());
+		hdt.close();
 	}
+	
 }

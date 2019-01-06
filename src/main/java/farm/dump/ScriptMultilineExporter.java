@@ -1,11 +1,11 @@
 package farm.dump;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,18 +16,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import common.Conf;
 import common.Util;
 import farm.BinSplitPacker;
-import farm.CharTable;
+import farm.Charset;
 
 
 public class ScriptMultilineExporter implements ScriptReader.Callback{
-	
-	public static void main(String[] args) throws IOException {
-		BinSplitPacker bin = BinSplitPacker.newInstance();
-		bin.split(Conf.bin);
-		byte[] bs = new ScriptMultilineExporter().exportExcel(bin, new CharTable("japan.tbl"));
-		Util.saveFile(bs, "C:\\Users\\administrator\\Desktop\\japan.xlsx");
-		bin.dispose();
-	}
 	
 	XSSFSheet sheet;
 	static final boolean LEFT=true,RIGHT=false;
@@ -37,7 +29,7 @@ public class ScriptMultilineExporter implements ScriptReader.Callback{
 	
 	XSSFCellStyle colorBg=null;
 	
-	public byte[] exportExcel(BinSplitPacker bin,CharTable charTable) throws IOException {
+	public byte[] exportExcel(BinSplitPacker bin,Charset charTable) throws IOException {
 		XSSFWorkbook book = new XSSFWorkbook();
 		colorBg=book.createCellStyle();
 		colorBg.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
