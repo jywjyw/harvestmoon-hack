@@ -36,5 +36,18 @@ public class Conf {
 	private static void assertNotnull(Object o) {
 		if(o==null)throw new RuntimeException("conf.prop初始化失败..");
 	}
+	
+	public static int getExeOffset(int memAddr){
+		return memAddr-0x8000f800;
+	}
+	
+	public static int getExeAddr(int offset){
+		return 0x8000f800+offset;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(Integer.toHexString(getExeOffset(0x8004B53C)));
+		System.out.println(Integer.toHexString(getExeAddr(0x507f0)));
+	}
 
 }
