@@ -1,0 +1,38 @@
+package farm.dump;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import common.RscLoader;
+import common.RscLoader.Callback;
+import common.Util;
+
+public class Charset {
+	Map<Integer,String> code_char = new HashMap<>();
+	Map<String,Integer> char_code = new HashMap<>();
+	
+	public Charset(String tbl) {
+		RscLoader.load(tbl, "gbk", new Callback() {
+			@Override
+			public void doInline(String line) {
+				String[] arr = line.split("=",2);
+				int code = Util.hiloShort(Integer.parseInt(arr[0], 16));
+				code_char.put(code,arr[1]);
+				char_code.put(arr[1], code);
+			}
+		});
+	}
+	
+	public String getChar(int code) {
+		return code_char.get(code);
+	}
+	
+	public boolean containChar(int code) {
+		return code_char.containsKey(code);
+	}
+	
+	public Integer getCode(String char_) {
+		return char_code.get(char_);
+	}
+	
+}

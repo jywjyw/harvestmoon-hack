@@ -16,7 +16,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import common.Conf;
 import common.Util;
 import farm.BinSplitPacker;
-import farm.Charset;
 
 
 public class ScriptMultilineExporter implements ScriptReader.Callback{

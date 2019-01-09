@@ -14,11 +14,11 @@ public class Conf {
 	SCRIPT_PREFIX_LEN = 0X1800,		//对话文本前的未知数据
 	SCRIPT_GROUP_LEN = 0x2000		//对话文本前的未知数据+0x800的对话文本为一组
 	;
-	public static final String BIN = "A_FILE.BIN", HDT = "A_FILE.HDT";
+	public static final String EXE_BOY="SLPS_024.89", BIN = "A_FILE.BIN", HDT = "A_FILE.HDT";
 	static {
 		InputStream is=null;
 		try {
-			is = Thread.currentThread().getContextClassLoader().getResourceAsStream("conf.prop");
+			is = Thread.currentThread().getContextClassLoader().getResourceAsStream("conf.properties");
 			Properties conf = new Properties();
 			conf.load(is);
 			boyjpdir = conf.getProperty("boyjpdir");

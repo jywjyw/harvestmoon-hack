@@ -4,10 +4,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -18,36 +20,44 @@ import javax.imageio.ImageIO;
 import common.Conf;
 import common.Img4bitUtil;
 import common.Palette;
-import common.Util;
+import common.RscLoader;
+import common.RscLoader.Callback;
 import common.VramImg;
 
 public class Enc {
 	public static void main(String[] args) throws IOException {
 		Enc enc=new Enc();
+//		for(int c:enc.codePool){
+//			System.out.printf("%04X\n",c);
+//		}
 		for(int a=0xb0;a<=0xf7;a++){
 			for(int b=0xa1;b<=0xfe;b++){
-				if(enc.size()>=CAPACITY) break;
+				if(enc.size()>=CAPACITY-200) break;
 				String zh=new String(new byte[]{(byte)a,(byte)b},"gbk");
 //				System.out.println(zh);
 				enc.getCode(zh);
 			}
 		}
 		
-		VramImg vram=FourLayerFontGen.build4LayerFont(enc.getLeftChars(), 63*4, Conf.desktop+"Zfull-GB.ttf", 12);
-		List<Palette> pals=FourLayerFontGen.build4Palette((short)0xff7f);
+		String font=Conf.desktop+"Zpix.ttf";
+		VramImg vram=FourLayerFontGen.build4LayerFont(enc.getLeftChars(), 63*4, font, 12);
+		List<Palette> pals=FourLayerFontGen.build4Palette((short)0x3e0);
 		for(int i=0;i<pals.size();i++){
 			Palette p = pals.get(i);
 			BufferedImage img = Img4bitUtil.readRomToBmp(new ByteArrayInputStream(vram.data), vram.w, vram.h, p);
 			ImageIO.write(img, "bmp", new File(Conf.desktop+i+"L.bmp"));
 		}
 		
-		System.out.println(Util.join(enc.getRightChars().getCharLayer(3), "",""));
-		vram=FourLayerFontGen.build4LayerFont(enc.getRightChars(), 63*4, Conf.desktop+"Zfull-GB.ttf", 12);
-		pals=FourLayerFontGen.build4Palette((short)0xff7f);
-		for(int i=0;i<pals.size();i++){
-			Palette p = pals.get(i);
-			BufferedImage img = Img4bitUtil.readRomToBmp(new ByteArrayInputStream(vram.data), vram.w, vram.h, p);
-			ImageIO.write(img, "bmp", new File(Conf.desktop+i+"R.bmp"));
+//		System.out.println(Util.join(enc.getRightChars().getCharLayer(3), "",""));
+		FourLayerChars rightChars=enc.getRightChars();
+		if(rightChars!=null){
+			vram=FourLayerFontGen.build4LayerFont(rightChars, 63*4, font, 12);
+			pals=FourLayerFontGen.build4Palette((short)0x3e0);
+			for(int i=0;i<pals.size();i++){
+				Palette p = pals.get(i);
+				BufferedImage img = Img4bitUtil.readRomToBmp(new ByteArrayInputStream(vram.data), vram.w, vram.h, p);
+				ImageIO.write(img, "bmp", new File(Conf.desktop+i+"R.bmp"));
+			}
 		}
 	}
 	
@@ -71,19 +81,18 @@ public class Enc {
 			c+=0x300;
 			codePool.add(c);
 		}
-//		RscLoader.load("init_enc.gbk", "gbk", new Callback() {
-//			@Override
-//			public void doInline(String line) {
-//				String[] arr=line.split("=");
-//				String ch=arr[1];
-//				Integer code=Integer.parseInt(arr[0],16);
-//				char_code.put(ch, code);
-//				char_count.put(ch,99999);
-//				codePool.remove(code);
-//			}
-//		});
+		RscLoader.load("init_enc.gbk", "gbk", new Callback() {
+			@Override
+			public void doInline(String line) {
+				String[] arr=line.split("=");
+				String ch=arr[1];
+				Integer code=Integer.parseInt(arr[0],16);
+				char_code.put(ch, code);
+				char_count.put(ch,99999);
+				codePool.remove(code);
+			}
+		});
 	}
-	
 	
 	public int getCode(String char_){
 		Integer code=char_code.get(char_);
@@ -108,14 +117,13 @@ public class Enc {
 	
 	
 	public FourLayerChars getLeftChars(){
-		List<Kv> kvs=buildKvs();
+		Map<Integer,String> kvs=buildSortedKv();
 		FourLayerChars f=new FourLayerChars();
 		for(int i=0;i<=L_LIMIT;i++){
 			for(int j=0,index=i;j<4;j++,index+=0x300){
-				if(index<kvs.size()){
-					Kv kv=kvs.get(index);
-					f.getCharLayer(j).add(kv.char_);
-				}
+				String char_=kvs.get(index);
+				if(char_!=null)
+					f.getCharLayer(j).add(char_);
 			}
 		}
 		return f;
@@ -123,21 +131,21 @@ public class Enc {
 	
 	
 	public FourLayerChars getRightChars(){
-		List<Kv> kvs=buildKvs();
+		Map<Integer,String> kvs=buildSortedKv();
 		FourLayerChars f=new FourLayerChars();
 		for(int i=L_LIMIT+1;i<=R_LIMIT;i++){
 			for(int j=0,index=i;j<4;j++,index+=0x300){
-				if(index<kvs.size()){
-					Kv kv=kvs.get(index);
-					f.getCharLayer(j).add(kv.char_);
-				}
+//				System.out.println(Integer.toHexString(index));
+				String char_=kvs.get(index);
+				if(char_!=null)
+					f.getCharLayer(j).add(char_);
 			}
 		}
-		return f;
+		if(f.totalSize()>0) return f;
+		else return null;
 	}
 	
-	
-	private List<Kv> buildKvs(){
+	private Map<Integer,String> buildSortedKv(){
 		List<Kv> kvs=new ArrayList<>();
 		for(Entry<String,Integer> e:char_code.entrySet()){
 			kvs.add(new Kv(e.getKey(),e.getValue()));
@@ -148,7 +156,24 @@ public class Enc {
 				return o1.code-o2.code;
 			}
 		});
-		return kvs;
+		Map<Integer,String> ret=new LinkedHashMap<>();
+		for(Kv k:kvs){
+			ret.put(k.code, k.char_);
+		}
+		return ret;
+	}
+	
+	public void fillGBK(){
+		for(int a=0xb0;a<=0xf7;a++){
+			for(int b=0xa1;b<=0xfe;b++){
+				if(size()>=CAPACITY) break;
+				try {
+					String zh = new String(new byte[]{(byte)a,(byte)b},"gbk");
+					getCode(zh);
+				} catch (UnsupportedEncodingException e) {
+				}
+			}
+		}
 	}
 	
 	private class Kv{

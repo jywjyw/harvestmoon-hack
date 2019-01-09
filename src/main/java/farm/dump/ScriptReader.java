@@ -5,7 +5,6 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import common.Util;
-import farm.Charset;
 
 /**
  * 读取ROM中的文本区

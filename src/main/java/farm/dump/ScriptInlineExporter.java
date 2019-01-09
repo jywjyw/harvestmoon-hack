@@ -11,14 +11,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import common.Conf;
-import farm.Charset;
 
 public class ScriptInlineExporter {
-	
-	public static void main(String[] args) throws IOException {
-		export("japan.tbl", "C:\\Users\\me\\Desktop\\farm-jp\\");
-		export("english.tbl", "C:\\Users\\me\\Desktop\\farm-en\\");
-	}
 	
 	public static void export(String tbl, String dir) throws IOException {
 		Charset table = new Charset(tbl);

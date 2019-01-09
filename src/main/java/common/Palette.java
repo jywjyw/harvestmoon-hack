@@ -27,6 +27,7 @@ public class Palette {
 		Palette.init16Grey();
 	}
 	
+	public static final int PAL16_CAPACITY=16*2, PAL256_CAPACITY=256*2;
 	private static final int FULL_TRANSPARENT=0,SEMI_TRANSPARENT=0x7E,NON_TRANSPARENT = 0xFF;
 	
 	private int colorCount;

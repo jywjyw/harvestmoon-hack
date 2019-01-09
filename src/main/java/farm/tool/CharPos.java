@@ -33,9 +33,5 @@ public class CharPos {
 		v=(v<<3)+(v<<2);	//v*12
 		System.out.printf("code=%04X,layer=%d,tp=%d,u=%d,v=%d\n",code,layer,tp,u,v);
 	}
-	
-	public static void getCharPos2(int code){
-		
-	}
 
 }

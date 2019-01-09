@@ -51,6 +51,7 @@ public class BinSplitPacker {
 			splitFiles.add(split);
 		}
 		binFile.close();
+		System.out.println("has splitted BIN to "+splitDir);
 	}
 	
 	public File getFile(int index){
@@ -72,7 +73,7 @@ public class BinSplitPacker {
 		
 		
 		FileOutputStream hdt = new FileOutputStream(outDir+Conf.HDT);
-		ByteBuffer hdtDat = ByteBuffer.allocate((splitFiles.size()+1)*4);
+		ByteBuffer hdtDat = ByteBuffer.allocate(0x800);		//file length must be multiple of 0x800, or isopatcher.java will occur error.
 		hdtDat.putInt(0);
 		long addr=0;
 		for(File f:splitFiles){

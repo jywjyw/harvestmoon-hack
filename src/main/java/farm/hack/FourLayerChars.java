@@ -24,5 +24,13 @@ public class FourLayerChars {
 	public List<String> getCharLayer(int i){
 		return chars.get(i);
 	}
+	
+	public int totalSize(){
+		int size=0;
+		for(int i=0;i<4;i++){
+			size += chars.get(i).size();
+		}
+		return size;
+	}
 
 }

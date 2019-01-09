@@ -70,7 +70,10 @@ public class Util {
 	}
 	
 	public static int hiloShort(int unsignedShort) {
-		return unsignedShort>>>8&0xff|unsignedShort<<8&0xff00;
+		return unsignedShort>>>8&0xff|(unsignedShort&0xff)<<8;
+	}
+	public static short hiloShort(short s) {
+		return (short)(s>>>8&0xff|(s&0xff)<<8);
 	}
 	
 	public static int toInt(byte a, byte b) {
@@ -275,6 +278,11 @@ public class Util {
 				System.out.println(new String(new byte[]{(byte) a,(byte) b},"gbk"));
 			}
 		}
+	}
+	
+	public static void main(String[] args) {
+		int i=0xffaa;
+		System.out.println(Integer.toHexString(hiloShort(i)));
 	}
 	
 }
