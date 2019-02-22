@@ -69,20 +69,26 @@ public class ExcelParser {
 		}
 	}
 	
+	public void parse(int startRow, RowCallback callback)	{
+		parse(workbook.getSheetAt(0), startRow, callback);
+	}
+	public void parse(String sheetName, int startRow, RowCallback callback)	{
+		Sheet sheet = workbook.getSheet(sheetName);
+		parse(sheet,startRow,callback);
+	}
 	/**
 	 * 主方法
 	 * @param startRow 从第几行开始解析
 	 * @param columnCount 每一行有多少列
 	 * @param callback
 	 */
-	public void parse(int startRow, RowCallback callback)	{
-		Sheet read = workbook.getSheetAt(0);
+	private void parse(Sheet sheet, int startRow, RowCallback callback)	{
 		FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 		int rowNum = startRow-1, cell=0;
 		try	{
 			while (true) {
-				Row row = read.getRow(rowNum);
-				if (row == null || row.getCell(0) == null)	{
+				Row row = sheet.getRow(rowNum);
+				if (row == null){
 					break;	//遇到空白行, 则读取完成
 				}
 				

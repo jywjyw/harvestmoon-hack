@@ -21,13 +21,13 @@ public class ScriptReader {
 		void every2Bytes(int index, String char_, int unsignedShort, boolean isCtrl);	
 	}
 	
-	public static void readUntilFFFF(byte[] script, Charset charTable, Callback c){
-		DataInputStream dis = new DataInputStream(new ByteArrayInputStream(script));
+	public static void readUntilFFFF(byte[] script, Charset cs, Callback c){
+		DataInputStream is = new DataInputStream(new ByteArrayInputStream(script));
 		int buf=0,index=0;
 		try {
 			while(true) {
-				buf = dis.readUnsignedShort();
-				String char_ = charTable.getChar(buf);
+				buf = Util.hiloShort(is.readUnsignedShort());
+				String char_ = cs.getChar(buf);
 				if(char_!=null){
 					c.every2Bytes(index,char_, buf, char_.startsWith("{"));
 				} else {
@@ -39,7 +39,7 @@ public class ScriptReader {
 				index++;
 			}
 		} catch (IOException e) {}
-		Util.close(dis);
+		Util.close(is);
 	}
 	
 	public static String readUntilFFFF(byte[] script, Charset charTable)  {

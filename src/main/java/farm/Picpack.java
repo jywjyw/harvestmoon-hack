@@ -30,7 +30,7 @@ public class Picpack {
 				p.y = Util.hiloShort(in.readShort());
 				p.w = Util.hiloShort(in.readShort());
 				p.h = Util.hiloShort(in.readShort());
-				if(p.type==Pic.TYPE_COMPRESS){
+				if(p.type==0 || p.type==4){
 					byte[] realData=new byte[(((size_type&0xffffff)+3)>>>2)<<2];	//be multiple of 4
 					in.read(realData);
 					p.data=Uncompressor.uncomp(new ByteArrayInputStream(realData));

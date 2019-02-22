@@ -1,37 +1,54 @@
 package farm.tool;
 
+import common.gpu.primitive.ClutId;
+
+//根据字符编码计算色板/UV/TP,写汇编指令的依据
 public class CharPos {
 	//get char pos by code
 	public static void main(String[] args) {
-		getCharPos1(0x01a5);
-		getCharPos1(0x0244);
-		getCharPos1(0x0844);
+//		getCharPos(0x1);
+//		getCharPos(0x01a5);
+		getCharPos(0x02da);
+//		getCharPos(0x0b44);
 		System.out.println(0xb%3);
 	}
 	
 	/**
-	 * layer 0:00xx,01xx,02xx
-	 * layer 1:03xx,04xx,05xx
-	 * layer 2:06xx,07xx,08xx
-	 * layer 3:09xx,0Axx,0Bxx
-	 * left :0000~01B8=735
-	 * right:01B9~02DE=441
+	 * layer 0:0000,01B8,01B9,02DE
+	 * layer 1:0300,04B8,04B9,05DE
+	 * layer 2:0600,07B8,07B9,08DE
+	 * layer 3:0900,0AB8,0aB9,0BDE
+	 * left :0000~01B8=441
+	 * right:01B9~02DE=294
 	 */
-	public static void getCharPos1(int code){
-		int n2=code>>8;
-		int layer=n2/3;
-		int mod=n2%3;
-		int code1=(mod<<8) | (code&0xff);
-		int tp=0x380;
-		if(code1>=0x01b9){
-			tp+=0x40;
-			code1-=0x01b9;
+	public static void getCharPos(int code){
+		int codeL=code>>8;
+		int mod=codeL%3, layer=codeL/3;
+		System.out.println("layer="+layer);
+		int clutX=0x37a,clutY=0xfe;
+		layer=layer<<4;
+		clutX+=layer;
+		
+		code=(mod<<8) | (code&0xff);
+		int boundary=0x1b8;
+		int boundaryOffset=code-boundary;
+		int codeX=code;
+		if(boundaryOffset > 0){
+			codeX -= boundary;
+			codeX -= 1;
 		}
-		int u=code1%21;
-		int v=code1/21;
-		u=(u<<3)+(u<<2);	//u*12
-		v=(v<<3)+(v<<2);	//v*12
-		System.out.printf("code=%04X,layer=%d,tp=%d,u=%d,v=%d\n",code,layer,tp,u,v);
+		
+		int u=codeX%0x15, v=codeX/0x15;
+		u=((u<<1)+u)<<2;	//u*12
+		v=((v<<1)+v)<<2;	//v*12
+		
+		int tp=0xe;
+		if(code-0x01b8 > 0){
+			tp+=1;
+		}
+		
+		System.out.printf("code=%04X,clut=%s,tp=%x,u=%d,v=%d\n",code,new ClutId(clutX,clutY),tp,u,v);
+		//输出值:tp/clutX/clutY/u/v
 	}
 
 }

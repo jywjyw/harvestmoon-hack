@@ -8,18 +8,14 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import common.Util;
-
 public class MipsCompiler {
 	
 	public static void main(String[] args) throws FileNotFoundException {
 		MipsCompiler c = new MipsCompiler();
-		c.setAddress(0x80032a38);
-		System.out.println(Util.hexEncode(c.compileLine("beq a0,v0,-1",0)));//
-		System.out.println(Util.hexEncode(c.compileLine("beq a0,v0,26",0)));//
-		System.out.println(Util.hexEncode(c.compileLine("beq a0,v0,80032aa0",0)));//
-		InputStream asm = Thread.currentThread().getContextClassLoader().getResourceAsStream("test.asm");
-		System.out.println(Util.hexEncode(c.compileFile(asm)));
+//		c.setAddress(0x80032a38);
+//		System.out.println(Util.hexEncode(c.compileLine("beq a0,v0,-1",0)));//
+		InputStream asm = Thread.currentThread().getContextClassLoader().getResourceAsStream("font.asm");
+//		System.out.println(Util.hexEncode(c.compileFile(asm)));
 	}
 	
 	private Integer address;
@@ -251,29 +247,57 @@ public class MipsCompiler {
 	/**
 	 * required address=80xxxxxx
 	 * example 1: beq a1,a2,80123456	//branch to memory address:80123456
-	 * example 2: beq a1,a2,5			//jump ahead 5 instructions
+	 * example 2: beq a1,a2,3			//jump ahead 3 instructions
+	 * 									//i.e: 
+	 * 									//beq a1,a2,3 : jump to "div xxxx"
+	 * 									//add xxxx
+	 * 									//sub xxxx
+	 * 									//div xxxx
+	 * 									//addiu xxxx
+	 * 
+	 * 
 	 * example 3: beq a1,a2,-5			//jump back 5 instructions
 	 */
 	public byte[] beq(String method, String s, int blank, int end){
 		if(address==null) throw new UnsupportedOperationException("branch instruction required address property");
 		String[] arr = s.substring(blank+1,end).split(",");
-		int offset;
-		if(arr[2].startsWith("-")){
-			offset=Integer.parseInt(arr[2])-1;
-		} else {
-			int target=Integer.parseUnsignedInt(arr[2],16); 
-			if(target>>>24==0x80){		//it's mem addr
-				offset=(target-address)/4-1;//以程序计数器$PC为基准,向前或向后跳跃N个指令
-			} else {
-				offset=Integer.parseInt(arr[2])-1;
-			}
-		}
-		if(offset>Short.MAX_VALUE || offset<Short.MIN_VALUE)
-			throw new RuntimeException("branch instruction offset is out of range:"+offset);
+		int offset = calculateOffset(arr[2]);
 		return typeI(method, arr[0], arr[1], offset);
 	}
 	public byte[] bne(String method, String s, int blank, int end){
 		return beq(method, s, blank, end);
+	}
+	public byte[] blez(String method, String s, int blank, int end){
+		if(address==null) throw new UnsupportedOperationException("branch instruction required address property");
+		String[] arr = s.substring(blank+1,end).split(",");
+		int offset = calculateOffset(arr[1]);
+		return typeI(method, arr[0], null, offset);
+	}
+	public byte[] bltz(String method, String s, int blank, int end){
+		return blez(method, s, blank, end);
+	}
+	public byte[] bgez(String method, String s, int blank, int end){
+		return blez(method, s, blank, end);
+	}
+	public byte[] bgtz(String method, String s, int blank, int end){
+		return blez(method, s, blank, end);
+	}
+	
+	private int calculateOffset(String s){
+		int offset;
+		if(s.startsWith("-")){
+			offset=Integer.parseInt(s)-1;
+		} else {
+			int target=Integer.parseUnsignedInt(s,16); 
+			if(target>>>24==0x80){		//it's mem addr
+				offset=(target-address)/4-1;//以程序计数器$PC为基准,向前或向后跳跃N个指令
+			} else {
+				offset=Integer.parseInt(s)-1;
+			}
+		}
+		if(offset>Short.MAX_VALUE || offset<Short.MIN_VALUE)
+			throw new RuntimeException("branch instruction offset is out of range:"+offset);
+		return offset;
 	}
 	
 	private byte[] typeI(String op, String rs, String rt, int immediate){
@@ -282,7 +306,8 @@ public class MipsCompiler {
 		int rsIndex = 0;
 		if(rs!=null) rsIndex = Register.index(rs);
 		i |= rsIndex<<21;
-		int rtIndex = Register.index(rt);
+		int rtIndex = 0;
+		if(rt!=null) rtIndex = Register.index(rt);
 		i |= rtIndex<<16;
 		i |= (immediate&0xffff);
 		return toBytes(i);

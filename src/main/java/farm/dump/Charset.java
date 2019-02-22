@@ -5,7 +5,6 @@ import java.util.Map;
 
 import common.RscLoader;
 import common.RscLoader.Callback;
-import common.Util;
 
 public class Charset {
 	Map<Integer,String> code_char = new HashMap<>();
@@ -16,7 +15,7 @@ public class Charset {
 			@Override
 			public void doInline(String line) {
 				String[] arr = line.split("=",2);
-				int code = Util.hiloShort(Integer.parseInt(arr[0], 16));
+				int code = Integer.parseInt(arr[0], 16);
 				code_char.put(code,arr[1]);
 				char_code.put(arr[1], code);
 			}

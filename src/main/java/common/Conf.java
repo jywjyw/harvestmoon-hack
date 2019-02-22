@@ -6,7 +6,7 @@ import java.util.Properties;
 
 public class Conf {
 	
-	public static String boyjpdir,boyoutdir,desktop;
+	public static String boyjpdir,boyendir,girljpdir,girlendir,outdir,desktop;
 	public static final int 
 	SECTOR = 0x800,
 	charW=12,charH=12,	//每个字体宽高
@@ -14,7 +14,10 @@ public class Conf {
 	SCRIPT_PREFIX_LEN = 0X1800,		//对话文本前的未知数据
 	SCRIPT_GROUP_LEN = 0x2000		//对话文本前的未知数据+0x800的对话文本为一组
 	;
-	public static final String EXE_BOY="SLPS_024.89", BIN = "A_FILE.BIN", HDT = "A_FILE.HDT";
+	public static final String BIN = "A_FILE.BIN", HDT = "A_FILE.HDT",
+			BOY_JP_EXE="SLPS_024.89", BOY_EN_EXE="SLUS_011.15",
+			GIRL_JP_EXE="SLPS_030.87"
+			;
 	static {
 		InputStream is=null;
 		try {
@@ -22,7 +25,10 @@ public class Conf {
 			Properties conf = new Properties();
 			conf.load(is);
 			boyjpdir = conf.getProperty("boyjpdir");
-			boyoutdir = conf.getProperty("boyoutdir");
+			boyendir = conf.getProperty("boyendir");
+			girljpdir = conf.getProperty("girljpdir");
+			girlendir = conf.getProperty("girlendir");
+			outdir = conf.getProperty("outdir");
 			desktop= conf.getProperty("desktop");
 		} catch (IOException e) {
 			e.printStackTrace();

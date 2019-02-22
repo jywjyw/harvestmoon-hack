@@ -14,7 +14,7 @@ public class HexSearcher {
 	public static void main(String[] args) throws IOException {
 		String dir = Conf.desktop+"boyjp\\";
 		System.out.println("searching...");
-		HexSearcher.searchDir(dir, "9e0c0079e0e9009d9999690000007d0d", null);
+		HexSearcher.searchDir(dir, "70971c80", null);
 		System.out.println("finish...");
 	}
 	

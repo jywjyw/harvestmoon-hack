@@ -10,12 +10,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import common.Conf;
+import common.IsoPatcher;
 import common.Util;
 
 public class BinSplitPacker {
 	
 	public static void main(String[] args) throws IOException {
-		new BinSplitPacker().split(Conf.boyjpdir, Conf.desktop+"boyjp\\");
+		BinSplitPacker bin = new BinSplitPacker();
+		String splitdir = Conf.desktop+"boyjp\\";
+		bin.split(Conf.boyjpdir, splitdir);
+		System.out.println("waiting for modify bin by crystaltile2 ....");
+		bin.pack(splitdir, Conf.outdir);
+		IsoPatcher.patch(Conf.outdir, Conf.outdir+"boy_hack.iso");
+		System.out.println("finished.");
 	}
 	
 	private List<File> splitFiles = new ArrayList<>();
@@ -51,7 +58,7 @@ public class BinSplitPacker {
 			splitFiles.add(split);
 		}
 		binFile.close();
-		System.out.println("has splitted BIN to "+splitDir);
+		System.out.println("BIN has been splitted to "+splitDir);
 	}
 	
 	public File getFile(int index){

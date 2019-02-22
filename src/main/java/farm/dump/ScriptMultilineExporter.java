@@ -1,9 +1,8 @@
 package farm.dump;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -14,7 +13,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import common.Conf;
-import common.Util;
 import farm.BinSplitPacker;
 
 
@@ -28,15 +26,14 @@ public class ScriptMultilineExporter implements ScriptReader.Callback{
 	
 	XSSFCellStyle colorBg=null;
 	
-	public byte[] exportExcel(BinSplitPacker bin,Charset charTable) throws IOException {
-		XSSFWorkbook book = new XSSFWorkbook();
-		colorBg=book.createCellStyle();
+	public void exportExcel(BinSplitPacker bin,Charset cs, XSSFWorkbook excel) throws IOException {
+		colorBg=excel.createCellStyle();
 		colorBg.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
 		colorBg.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 		for(int fileIndex : new int[]{2,3,4,5,6}){
 			resetOnNewSheet();
-			this.sheet = book.createSheet(fileIndex+"");
+			this.sheet = excel.createSheet(fileIndex+"");
 			sheet.setColumnWidth(1, 10000);
 			sheet.setColumnWidth(2, 10000);
 			
@@ -45,10 +42,14 @@ public class ScriptMultilineExporter implements ScriptReader.Callback{
 			for(int i=0;i*Conf.SCRIPT_GROUP_LEN+Conf.SCRIPT_PREFIX_LEN<=file.length();i++) {
 				try {
 					file.seek(i*Conf.SCRIPT_GROUP_LEN+Conf.SCRIPT_PREFIX_LEN);
+					if(fileIndex==4 && i==256)
+						System.out.println();
 					file.read(buf);
-					scriptIndex=i;
-					newRow();
-					ScriptReader.readUntilFFFF(buf, charTable, this);
+					if(!is0(buf)){
+						scriptIndex=i;
+						newRow();
+						ScriptReader.readUntilFFFF(buf, cs, this);
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 					break;
@@ -56,16 +57,11 @@ public class ScriptMultilineExporter implements ScriptReader.Callback{
 			}
 			file.close();
 		}
-		
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try {
-			book.write(bos);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			Util.close(book);
-		}
-		return bos.toByteArray();
+	}
+	
+	private static byte[] zero = new byte[Conf.SECTOR];
+	private boolean is0(byte[] buf){
+		return Arrays.equals(buf, zero);
 	}
 
 	@Override

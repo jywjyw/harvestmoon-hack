@@ -25,12 +25,12 @@ public class FourLayerFontGen {
 	public static void main(String[] args) throws IOException  {
 		FourLayerChars charLayers = new FourLayerChars();
 		for(int i=0;i<21*21;i++){
-			charLayers.put("壹");
-			charLayers.put("贰");
-			charLayers.put("叁");
-			charLayers.put("肆");
+			charLayers.put("中");
+			charLayers.put("国");
+			charLayers.put("智");
+			charLayers.put("造");
 		}
-		VramImg vram=build4LayerFont(charLayers, 63*4, Conf.desktop+"Zfull-GB.ttf", 12);
+		VramImg vram=build4LayerFont(charLayers, 63*4, Conf.desktop+"方正像素12.ttf", 12);
 		List<Palette> pals=build4Palette((short)0xff7f);
 		for(int i=0;i<pals.size();i++){
 			Palette p = pals.get(i);
