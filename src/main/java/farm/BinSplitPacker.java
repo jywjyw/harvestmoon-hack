@@ -18,11 +18,11 @@ public class BinSplitPacker {
 	public static void main(String[] args) throws IOException {
 		BinSplitPacker bin = new BinSplitPacker();
 		String splitdir = Conf.desktop+"boyjp\\";
-		bin.split(Conf.boyjpdir, splitdir);
-		System.out.println("waiting for modify bin by crystaltile2 ....");
-		bin.pack(splitdir, Conf.outdir);
-		IsoPatcher.patch(Conf.outdir, Conf.outdir+"boy_hack.iso");
-		System.out.println("finished.");
+		bin.split(Conf.girlendir, splitdir);
+//		System.out.println("waiting for modify bin by crystaltile2 ....");
+//		bin.pack(splitdir, Conf.outdir);
+//		IsoPatcher.patch(Conf.outdir, Conf.outdir+"boy_hack.iso");
+//		System.out.println("finished.");
 	}
 	
 	private List<File> splitFiles = new ArrayList<>();

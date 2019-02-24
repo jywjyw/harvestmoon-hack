@@ -223,7 +223,7 @@
 00DE=[repeat]
 00DF=[chicken]
 00E0=[dog]
-00E1=[horse]
+00E1=[hoof]
 00E2=[cow]
 00E3=[fish]
 00E4=&
@@ -734,8 +734,12 @@
 02DD=¸æ
 0FFB={cs}
 0FFC={wt}
+0FFD= 
 400A={boy}
+400B={horse}
 400C={dog}
 400D={farm}
+400E={baby}
+400F={husband}
 FFFE={br}
 FFFF={ed}
