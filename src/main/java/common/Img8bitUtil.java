@@ -3,12 +3,19 @@ package common;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Img8bitUtil {
+	
+	public static BufferedImage readRomToBmp(InputStream in, int vramW, int vramH, Palette pal) throws IOException {
+		int displayW = vramW*2;	//8bit下显示宽度*2;
+		BufferedImage out = new BufferedImage(displayW, vramH, BufferedImage.TYPE_INT_RGB);
+		return readRomToImg(in, vramW, vramH, pal, displayW, out);
+	}
 	
 	public static BufferedImage readRomToBmp(RandomAccessFile in, int vramW, int vramH, Palette pal) throws IOException {
 		int displayW = vramW*2;	//8bit下显示宽度*2;
@@ -17,6 +24,12 @@ public class Img8bitUtil {
 	}
 	
 	public static BufferedImage readRomToPng(RandomAccessFile in, int vramW, int vramH, Palette pal) throws IOException {
+		int displayW = vramW*2;	//8bit下显示宽度*2;
+		BufferedImage out = new BufferedImage(displayW, vramH, BufferedImage.TYPE_INT_ARGB);
+		return readRomToImg(in, vramW, vramH, pal, displayW, out);
+	}
+	
+	public static BufferedImage readRomToPng(InputStream in, int vramW, int vramH, Palette pal) throws IOException {
 		int displayW = vramW*2;	//8bit下显示宽度*2;
 		BufferedImage out = new BufferedImage(displayW, vramH, BufferedImage.TYPE_INT_ARGB);
 		return readRomToImg(in, vramW, vramH, pal, displayW, out);
@@ -46,8 +59,32 @@ public class Img8bitUtil {
 		return out;
 	}
 	
-	//从paletta中查找精确的颜色
-	public static VramImg toVramImg(BufferedImage png, Palette pal){
+	private static BufferedImage readRomToImg(InputStream in, int vramW, int vramH, Palette pal, int displayW, BufferedImage out) throws IOException {
+		WritableRaster raster = out.getRaster();
+		byte[] buf = new byte[vramW*2];
+		int x=0,y=0;
+		boolean _break=false;
+		while(true) {
+			in.read(buf);
+			for(byte b : buf) {
+				int[] color =pal.getRgba8888Matrix()[b&0xff];
+				raster.setPixel(x++, y, color);	//rgba
+				if(x>=displayW) {
+					x=0;
+					y++;
+					if(y>=vramH) {
+						_break=true;
+						break;
+					}
+				}
+			}
+			if(_break)break;
+		}
+		return out;
+	}
+	
+	//从palette中查找精确的颜色
+	public static VramImg toVramImg(BufferedImage png, final Palette pal){
 		return toVramImg(png, new PixelConverter(){
 			@Override
 			public int toPalIndex(int[] pixel) {

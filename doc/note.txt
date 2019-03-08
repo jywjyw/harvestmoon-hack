@@ -1,13 +1,27 @@
 ========内存规划==========
 80000000 ~ 80060000: EXE
 80060578~?: 显存upload中转区,每一行图像被解压至此,再upload至显存
-801C8440 ~ 801d4c40:CD数据加载至此,再解压至8006xxxx 
+801C8440 ~ 801d4c40:CD数据加载至此,再解压至8006xxxx
+
+
+========文件0的格式=================
+由若干个picpack组成，每个picpack的大小为0x800的倍数
+有的picpack头部包含一组不明数据，有的不包含，根据第一个字节判断，为E则为不明数据
+不明数据的格式：
+假如不明数据的起始值为base, 自第16个字节起：共有5个指针，每个指针占4字节，指针+base=区块地址，这5个区块的含义不明,第1区为XYWH,但并不一一对应
+再往后跳过N个字节，代表picpack数据。N被写在机器指令中，每个picpack的N各不同，例如：
+800ba860 : BNE     801c8440 (v0), 00000000 (r0), 800ba870,
+800ba864 : ORI     801c8440 (a0), 00000000 (r0), afa4 (44964),
+800ba870 : LW      801c8440 (v0), fac8 (80060000 (s0)) [8005fac8]
+800ba874 : JAL     80017fa8, 800ba860 (ra),
+800ba878 : ADDU    0000afa4 (a0), 801be1b0 (v0), 0000afa4 (a0),
+picpack起始地址为a0=801c9154,
 
 
 ========字库==================
 字库分左右两个,共735字
 文件0的0x7c处开始是右字库,共21*14=294字:
-3byte:图像体大小0x0052b0,
+3byte:图像体大小0x52b0,
 1byte:
 4byte:3c0,0 xy
 4byte:0x3f,0xa8 代表宽高63,168
@@ -42,6 +56,10 @@ fffx:控制符
 こたえてください。
 位于8006e4a0处
 
+おう！ ちょうどよかった。
+ちょっと来てくれ！ 大变なんだ！！
+位于8006f020处
+
 每行可容纳18个字,继续变大则超出对话框背景, 达到23个字时则因超出显存范围而死机
 文件3的1900处是开头对话
 xxxxF70F:显示头像,xxxx为变化的头像指针
@@ -49,42 +67,14 @@ xxxxF70F:显示头像,xxxx为变化的头像指针
 
 ============A_FILE.BIN===================================
 A_FILE.HDT是A_FILE.BIN的索引表,每4字节一组,共36组,将A_FILE.BIN拆解成36个文件,目录如下
-0=objcg/gf.bin
-1=objcg/face.bin
-2=objcg/message0.bin
-3=objcg/message1.bin
-4=objcg/message2.bin
-5=objcg/message3.bin
-6=objcg/message4.bin
-7=data/font/font_all.tex
-8=obj/debug.bin
-9=objcg/sound.stm
-10=obj/pdasamp.bin
-11=obj/gf_farm.bin
-12=objcg/event_s.bin
-13=objcg/evch.bin
-14=objcg/spring.bin
-15=objcg/summer.bin
-16=objcg/fall.bin
-17=objcg/winter.bin
-18=objcg/status.bin
-19=obj/save_load.bin
-20=objcg/slp.bin
-21=obj/GF_MG1.bin
-22=objcg/MG1.bin
-23=obj/GF_MG2.bin
-24=objcg/MG2.bin
-25=obj/GF_MG3.bin
-26=objcg/MG3.bin
-27=obj/GF_MG4.bin
-28=objcg/MG4.bin
-29=obj/GF_MG5.bin
-30=objcg/MG5.bin
-31=obj/GF_TITLE.bin
-32=obj/GF_STAFF.bin
-33=objcg/MesEv.bin
-34=obj/GF_swind.bin
-35=obj/gf_mcard.bin
 
+======Another version=============
+2000 PlayStation the Best	Japanese	SLPS 91218
 
+picpack0的大小:
+800bb52c : ORI     00ffffff (a2), 00000000 (r0), d000 (53248),	//a2=pac大小=d000
 
+picpackD000的定位:
+800bafbc : ORI     0005ed7c (a1), 00000000 (r0), d000 (53248),	//起始位置为d000
+800bafc0 : LUI     00ffffff (a2), 0002 (2),
+800bafc4 : ORI     00020000 (a2), 00020000 (a2), 3000 (12288),	//a2=pac大小=23000

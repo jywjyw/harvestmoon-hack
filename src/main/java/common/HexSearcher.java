@@ -12,9 +12,13 @@ import java.util.List;
 public class HexSearcher {
 	
 	public static void main(String[] args) throws IOException {
-		String dir = Conf.desktop+"boyjp\\";
+		String dir = Conf.desktop+"harvest\\";
 		System.out.println("searching...");
-		HexSearcher.searchDir(dir, "70971c80", null);
+		HexSearcher.searchDir(dir, "00d00634d855000c", null);
+//		HexSearcher.searchDir(dir, "00d005340200063c", null);
+//		HexSearcher.searchDir(dir, "00d005340200063c0030c634", null);
+//		HexSearcher.searchDir(dir, "00d006341000a3af", null);
+		
 		System.out.println("finish...");
 	}
 	
@@ -22,8 +26,8 @@ public class HexSearcher {
 		void onFound(File f, long addr);
 	}
 	
-	public static void searchDir(String dir, String query, Callback cb){
-		byte[] q = Util.decodeHex(query.replace(" ", ""));
+	public static void searchDir(String dir, String query, final Callback cb){
+		final byte[] q = Util.decodeHex(query.replace(" ", ""));
 		DirLooper.loop(dir, new DirLooper.Callback() {
 			@Override
 			public void handleFile(File f) {

@@ -8,7 +8,7 @@ public class CharPos {
 	public static void main(String[] args) {
 //		getCharPos(0x1);
 //		getCharPos(0x01a5);
-		getCharPos(0x02da);
+		getCharPos(0x0301);
 //		getCharPos(0x0b44);
 		System.out.println(0xb%3);
 	}
@@ -25,7 +25,7 @@ public class CharPos {
 		int codeL=code>>8;
 		int mod=codeL%3, layer=codeL/3;
 		System.out.println("layer="+layer);
-		int clutX=0x37a,clutY=0xfe;
+		int clutX=896,clutY=252;
 		layer=layer<<4;
 		clutX+=layer;
 		

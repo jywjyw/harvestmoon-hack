@@ -8,12 +8,14 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import common.Util;
+
 public class MipsCompiler {
 	
 	public static void main(String[] args) throws FileNotFoundException {
 		MipsCompiler c = new MipsCompiler();
 //		c.setAddress(0x80032a38);
-//		System.out.println(Util.hexEncode(c.compileLine("beq a0,v0,-1",0)));//
+		System.out.println(Util.hexEncode(c.compileLine("ori a2,r0,d000",0)));//
 		InputStream asm = Thread.currentThread().getContextClassLoader().getResourceAsStream("font.asm");
 //		System.out.println(Util.hexEncode(c.compileFile(asm)));
 	}

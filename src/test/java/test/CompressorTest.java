@@ -18,12 +18,11 @@ public class CompressorTest {
 	
 	@Test
 	public void test1() throws IOException{
-		File uncomp=new File(Thread.currentThread().getContextClassLoader().getResource("uncomp").getPath());
-		
+		File uncomp=new File(Thread.currentThread().getContextClassLoader().getResource("uncomp1").getPath());
 		FileInputStream uncompIs=new FileInputStream(uncomp);
-		byte[] comp=Compressor.compress(uncompIs);
+		byte[] comp=new Compressor().compress(uncompIs);
 		uncompIs.close();
-		System.out.println("compressed:"+comp.length);
+		System.out.println("len after compressed:"+comp.length);
 		
 		File reuncomp=new File(Conf.desktop+"reuncomp");
 		FileOutputStream reuncompOs=new FileOutputStream(reuncomp);

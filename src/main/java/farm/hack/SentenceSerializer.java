@@ -9,8 +9,8 @@ import farm.hack.SentenceSplitter.Callback;
 
 public class SentenceSerializer {
 	
-	public static byte[] toBytes(Encoding enc, String sentence){
-		ByteBuffer buf = ByteBuffer.allocate(Conf.SECTOR);
+	public static byte[] toBytes(final Encoding enc, String sentence){
+		final ByteBuffer buf = ByteBuffer.allocate(Conf.SECTOR);
 		buf.order(ByteOrder.LITTLE_ENDIAN);
 		SentenceSplitter.splitToWords(sentence, new Callback() {
 			@Override

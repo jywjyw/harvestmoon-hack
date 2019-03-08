@@ -189,15 +189,31 @@ public class Util {
 			file.getParentFile().mkdirs();
 	}
 	
-	public static int get0x800Multiple(int len){
-		if(len%0x800==0){
-			return len;
+	public static int get4Multiple(int i){
+		if(i%4==0){
+			return i;
 		} else{
-			return (len/0x800+1)*0x800;
+			return (i/4+1)*4;
 		}
 	}
-	public static int get0x800MultipleDiff(int len){
-		int remainder=len%0x800;
+	
+	public static int getMultiple(int i, int align){
+		if(i%align==0){
+			return i;
+		} else{
+			return (i/align+1)*align;
+		}
+	}
+	
+	public static int get0x800Multiple(int i){
+		if(i%0x800==0){
+			return i;
+		} else{
+			return (i/0x800+1)*0x800;
+		}
+	}
+	public static int get0x800MultipleDiff(int i){
+		int remainder=i%0x800;
 		if(remainder==0){	
 			return 0;
 		} else{
@@ -281,8 +297,16 @@ public class Util {
 	}
 	
 	public static void main(String[] args) {
-		int i=0xffaa;
-		System.out.println(Integer.toHexString(hiloShort(i)));
+		System.out.println(Integer.toHexString(itob(btoi((byte)0))));
+		System.out.println(Integer.toHexString(itob(btoi((byte)4))));
+		System.out.println(Integer.toHexString(itob(btoi((byte)60))));
+		System.out.println(Integer.toHexString(itob(btoi((byte)61))));
+	}
+	public static int btoi(byte b){
+		return b/16*10 + b%16;
+	}
+	public static byte itob(int i){
+		return (byte)(i/10*16 + i%10);
 	}
 	
 }

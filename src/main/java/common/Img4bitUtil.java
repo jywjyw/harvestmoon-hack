@@ -65,7 +65,7 @@ public class Img4bitUtil {
 	
 	
 	//从palette中查找精确的颜色
-	public static VramImg toVramImg(BufferedImage img, Palette pal){
+	public static VramImg toVramImg(BufferedImage img, final Palette pal){
 		return toVramImg(img, new PixelConverter(){
 			@Override
 			public int toPalIndex(int[] pixel) {

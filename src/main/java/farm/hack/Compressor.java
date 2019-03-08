@@ -12,10 +12,10 @@ import common.Util;
 public class Compressor {
 	public static void main(String[] args) throws IOException {
 		byte[] raw=Util.decodeHex("00010222222222223333");
-		compress(new ByteArrayInputStream(raw));
+		new Compressor().compress(new ByteArrayInputStream(raw));
 	}
 	
-	public static byte[] compress(InputStream is) throws IOException{
+	public byte[] compress(InputStream is) throws IOException{
 		ByteArrayInputStream pairs=new ByteArrayInputStream(encodeToPairs(is));
 		ByteArrayOutputStream comp=new ByteArrayOutputStream();
 		byte[] pair=new byte[2];
@@ -38,33 +38,35 @@ public class Compressor {
 		if(noRepeat.position()>0){
 			flushNoRepeat(comp, noRepeat);
 		}
+//		System.out.printf("compress rate: %d%%\n",(int)((float)rawLen/comp.size()*100));
 		return comp.toByteArray();
 	}
 	
-	private static void flushNoRepeat(ByteArrayOutputStream comp, ByteBuffer noRepeat) throws IOException{
+	private void flushNoRepeat(ByteArrayOutputStream comp, ByteBuffer noRepeat) throws IOException{
 		comp.write(0xff-noRepeat.position()+1);
 		comp.write(Arrays.copyOf(noRepeat.array(), noRepeat.position()));
 		noRepeat.position(0);
 	}
 	
+	private int rawLen=0;
 	
-	
-	private static byte[] encodeToPairs(InputStream is) throws IOException{
+	private byte[] encodeToPairs(InputStream is) throws IOException{
 		ByteArrayOutputStream pairs=new ByteArrayOutputStream();
-		int prev=is.read(),buf,count=1;
+		int prev=is.read(),buf,count=1,i=0;
 		while((buf=is.read())!=-1){
+			rawLen++;
 			if(buf==prev) {
 				count++;
 				if(count==127){
-					pairs.write(count);
-					pairs.write(prev);
+					appendPair(pairs, count, prev);
 					buf=is.read();
 					if(buf==-1) break;
 					count=1; 
 				}
 			} else if(count>0){
-				pairs.write(count);
-				pairs.write(prev);
+				appendPair(pairs, count, prev);
+				if(i==325)
+					System.out.println();
 				count=1;
 			} else {
 				throw new RuntimeException();
@@ -73,10 +75,13 @@ public class Compressor {
 		}
 		is.close();
 		
-		pairs.write(1);		//assert count==1
-		pairs.write(prev);
+		appendPair(pairs, count, prev);
 		return pairs.toByteArray();
 	}
-
-
+	
+	private void appendPair(ByteArrayOutputStream pairs, int count, int prev){
+		pairs.write(count);
+		pairs.write(prev);
+//		System.out.printf("(%d,%X)\n",count,prev);
+	}
 }

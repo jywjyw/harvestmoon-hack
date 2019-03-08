@@ -1,6 +1,8 @@
 package common;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -10,22 +12,6 @@ import java.util.Properties;
 
 public class IsoPatcher {
 	
-	public static void main(String[] args) throws IOException {
-//		new IsoPatcher().patch(null);
-		RandomAccessFile f=new RandomAccessFile("D:\\ps3\\Brave Fencer Musashiden (Japan) (Track 1).bin", "r");
-		int size=0x930;
-		int i=0;
-		byte[] buf=new byte[3];
-		while(true){
-			int pos=i++*size+0xc;
-			if(pos>f.length())break;
-			f.seek(pos);
-			f.read(buf);
-			System.out.println(Util.hexEncode(buf));
-		}
-		f.close();
-	}
-	
 	private static final int 
 			SECTOR_SIZE=0x930, 
 			SECTOR_HEADER_SIZE=4,		//分:秒:帧+mode
@@ -33,12 +19,12 @@ public class IsoPatcher {
 	private static final byte[] 
 			SECTOR_SYNC=new byte[]{0,(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff,0};
 	
-	public static void patch(String dir, String iso) throws IOException{
-		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("isopatcher.properties");
+	public static void patch(String conf, String dir, String iso) throws IOException{
+		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(conf);
 		Properties prop=new Properties();
 		prop.load(is);
 		is.close();
-		
+		if(!new File(iso).exists()) throw new FileNotFoundException(iso+" not exists!");
 		RandomAccessFile isoF=new RandomAccessFile(iso, "rw");
 		for(Entry<Object,Object> e :prop.entrySet()){
 			String f=(String)e.getKey();

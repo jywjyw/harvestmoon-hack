@@ -64,7 +64,7 @@ public class Encoding {
 	
 	public int put(String char_){
 		Integer code=codePool.poll();
-		if(code==null) throw new UnsupportedOperationException("too many char, there's not enough char code");
+		if(code==null) throw new UnsupportedOperationException("too many char, only support char count:"+charCapacity);
 		char_code.put(char_,code);
 		return code;
 	}

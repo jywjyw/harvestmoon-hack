@@ -1,5 +1,6 @@
 package farm.dump;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import common.Conf;
+import common.Util;
 import farm.BinSplitPacker;
 
 
@@ -56,6 +58,31 @@ public class ScriptMultilineExporter implements ScriptReader.Callback{
 			}
 			file.close();
 		}
+	}
+	
+	public void exportGirlExcel(BinSplitPacker bin,Charset cs, XSSFWorkbook excel) throws IOException {
+		exportExcel(bin, cs, excel);
+		resetOnNewSheet();
+		this.sheet = excel.createSheet("12");
+		sheet.setColumnWidth(1, 10000);
+		sheet.setColumnWidth(2, 10000);
+		
+		RandomAccessFile file = new RandomAccessFile(bin.getFile(12), "r");
+		ByteArrayOutputStream sector=new ByteArrayOutputStream();
+		byte[] charBuf=new byte[2];
+		scriptIndex=0;
+		while(file.getFilePointer()<0x1900){
+			file.read(charBuf);
+			sector.write(charBuf);
+			if(charBuf[0]==(byte)0xff && charBuf[1]==(byte)0xff){
+				newRow();
+				ScriptReader.readUntilFFFF(sector.toByteArray(), cs, this);
+				sector=new ByteArrayOutputStream();
+				scriptIndex=Util.getMultiple((int)file.getFilePointer(), 0x100);
+				file.seek(scriptIndex);
+			}
+		}
+		file.close();
 	}
 	
 	public void exportExcelGirlEn(BinSplitPacker bin,Charset cs, XSSFWorkbook excel) throws IOException {

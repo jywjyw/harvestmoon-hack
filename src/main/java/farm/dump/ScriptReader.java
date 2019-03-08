@@ -43,7 +43,7 @@ public class ScriptReader {
 	}
 	
 	public static String readUntilFFFF(byte[] script, Charset charTable)  {
-		StringBuilder ret = new StringBuilder();
+		final StringBuilder ret = new StringBuilder();
 		readUntilFFFF(script, charTable, new Callback() {
 			@Override
 			public void every2Bytes(int index,String s, int unsignedShort, boolean isCtrl) {

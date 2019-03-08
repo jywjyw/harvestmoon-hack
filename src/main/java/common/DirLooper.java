@@ -8,7 +8,7 @@ import java.io.RandomAccessFile;
 
 public class DirLooper {
 	
-	public static void loop(String dir, Callback c) {
+	public static void loop(String dir, final Callback c) {
 		new File(dir).listFiles(new FileFilter() {
 			@Override
 			public boolean accept(File pathname) {

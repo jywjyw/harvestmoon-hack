@@ -8,29 +8,30 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
 import common.Conf;
+import common.RscLoader;
 
 public class GlyphDrawer {
 	
 	public static void main(String[] args) throws IOException {
-		GlyphDrawer g=new GlyphDrawer(Conf.desktop+"方正像素12.ttf",0,10);
+		GlyphDrawer g=new GlyphDrawer(Conf.getRawFile("方正像素12.ttf"),0,10);
 		BufferedImage img=g.generateGlyph("我");
 		ImageIO.write(img, "bmp", new File(Conf.desktop+"glyph.bmp"));
 	}
 	
 	public GlyphDrawer(){
-		this(Conf.desktop+"Zpix.ttf", -1,9);
-//		this(Conf.desktop+"方正像素12.ttf",0,10);
+//		this(Conf.getRawFile("Zpix.ttf"), -1,9);
+		this(Conf.getRawFile("方正像素12.ttf"),0,10);
 	}
 	
 	Font font;
 	int baseX,baseY;
-	List<String> specGlyph = new ArrayList<>();
+	Map<String,BufferedImage> specGlyph = new HashMap<>();
 	
 	public GlyphDrawer(String fontFile, int baseX, int baseY){
 		try {
@@ -42,52 +43,34 @@ public class GlyphDrawer {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-//		specGlyph.add("0");
-//		specGlyph.add("1");
-//		specGlyph.add("2");
-//		specGlyph.add("3");
-//		specGlyph.add("4");
-//		specGlyph.add("5");
-//		specGlyph.add("6");
-//		specGlyph.add("7");
-//		specGlyph.add("8");
-//		specGlyph.add("9");
-		specGlyph.add("○");
-		specGlyph.add("※");
-		specGlyph.add("△");
-		specGlyph.add("□");
-		specGlyph.add("/");
-		specGlyph.add("[up]");
-		specGlyph.add("[heart]");
-		specGlyph.add("[unheart]");
-		specGlyph.add("～");
-		specGlyph.add("_");
-		specGlyph.add("[repeat]");
-		specGlyph.add("[chicken]");
-		specGlyph.add("[dog]");
-		specGlyph.add("[horse]");
-		specGlyph.add("[cow]");
-		specGlyph.add("[fish]");
-		specGlyph.add("&");
-		specGlyph.add("[star]");
-		specGlyph.add("[unstar]");
-		specGlyph.add("[LD]");
-		specGlyph.add("[LU]");
-		specGlyph.add("[RU]");
-		specGlyph.add("[RD]");
-		specGlyph.add("[king]");
-		specGlyph.add("[one]");
-		specGlyph.add("[two]");
-		specGlyph.add("[three]");
-		specGlyph.add("[four]");
-		specGlyph.add("[five]");
-		specGlyph.add("[six]");
+		
+		try {
+			final BufferedImage glyphs = ImageIO.read(new File(Conf.getRawFile("glyph/spec_glyph.bmp")));
+			int[] pixel=new int[3];
+			for(int y=0;y<glyphs.getHeight();y++){
+				for(int x=0;x<glyphs.getWidth();x++){
+					glyphs.getRaster().getPixel(x, y, pixel);
+					if(pixel[0]!=0 && pixel[0]!=255){
+						throw new UnsupportedOperationException("spec_glyph.bmp contains illegal pixel");
+					}
+				}
+			}
+			RscLoader.load(new File(Conf.getRawFile("glyph/spec_glyph.conf")), "gbk", new RscLoader.Callback() {
+				@Override
+				public void doInline(String line) {
+					String[] arr=line.split("="), xy=arr[1].split(",");
+					int x=Integer.parseInt(xy[0])*12, y=Integer.parseInt(xy[1])*12;
+					specGlyph.put(arr[0], glyphs.getSubimage(x, y, 12, 12));
+				}
+			});
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public BufferedImage generateGlyph(String ch){
-		if(specGlyph.contains(ch)){
-			//TODO load customized glyph
-			return null;
+		if(specGlyph.containsKey(ch)){
+			return specGlyph.get(ch);
 		} else {
 			char[] chars=ch.toCharArray();
 			if(chars.length>1) throw new UnsupportedOperationException("字库无法识别:" + ch);

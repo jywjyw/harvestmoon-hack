@@ -34,7 +34,7 @@ public class PixelFontGen {
 		}
 	}
 	
-	public static VramImg gen4bitVramImg(String allChar, String fontFile, int vramW, int fontsize, PixelCallback pixelCallback){
+	public static VramImg gen4bitVramImg(String allChar, String fontFile, int vramW, int fontsize, final PixelCallback pixelCallback){
 		int w=vramW*4, column=w/fontsize, marginRight=w%fontsize;
 		List<BufferedImage> tiles=genBmpTiles(allChar, fontFile, fontsize, 0);
 		BufferedImage joint=Img4bitUtil.jointTiles(tiles, column, marginRight, PixelFontGen.BACKGROUND_COLOR);

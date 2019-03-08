@@ -20,11 +20,11 @@ import javax.imageio.ImageIO;
 public class Palette {
 	
 	public static void main(String[] args) throws IOException {
-//		Palette p = new Palette(16, Conf.getRawFile("clut/memcard.16"));
+		Palette p = new Palette(16, Conf.getRawFile("clut/368-497.16"));
 //		for(int[] i:p.rgba8888Matrix){
 //			System.out.printf("%x,%x,%x,%x\n",i[0],i[1],i[2],i[3]);
 //		}
-		Palette.init16Grey();
+//		Palette.init16Grey();
 	}
 	
 	public static final int PAL16_CAPACITY=16*2, PAL256_CAPACITY=256*2;
@@ -94,8 +94,12 @@ public class Palette {
 		
 		for(int[] i:rgba5551Matrix){
 			for(int[] j:rgba5551Matrix){
-				if(i[0]==j[0] && i[1]==j[1] && i[2]==j[2] && i[3]!=j[3]){
-					throw new UnsupportedOperationException("this palette has same rgb but different alpha color, this may cause bug");
+				if(i[0]==j[0] && i[1]==j[1] && i[2]==j[2]){
+					if(i[3]==j[3]){
+//						System.err.println("this palette has same color, this may cause bug");	//there's some palette
+					} else {
+						System.err.println("this palette has same rgb but different alpha color, this may cause bug");
+					}
 				}
 			}
 		}
