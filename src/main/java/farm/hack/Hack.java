@@ -13,11 +13,11 @@ import farm.pic.AllPicture;
 public class Hack {
 	
 	public static void main(String[] args) throws IOException {
-		hackBoy(Conf.desktop+"boy-jp.xlsx", Conf.outdir+"boy-hack.iso");
+		hackBoy(new File("C:\\Users\\Administrator\\Documents\\Tencent Files\\329682470\\FileRecv\\boy-jpEXE已标识1.xlsx"), Conf.outdir+"boy-hack.iso");
 //		hackGirl(Conf.desktop+"girl-jp.xlsx", Conf.outdir+"girl-hack.iso");
 	}
 	
-	public static void hackBoy(String excel, String iso) throws IOException {
+	public static void hackBoy(File excel, String iso) throws IOException {
 		try {
 			String exe=Conf.outdir+Conf.BOY_JP_EXE;
 			Util.copyFile(Conf.boyjpdir+Conf.BOY_JP_EXE, exe);
@@ -28,7 +28,8 @@ public class Hack {
 			bin.split(Conf.boyjpdir, splitDir);
 			
 			Encoding enc=new Encoding();
-			new ScriptImporter(enc).importBoy(bin,new File(excel));;
+			new ExeTextImporter(enc).import_(excel,exe);
+			new ScriptImporter(enc).importBoy(bin,excel);;
 			
 			VramImg[] lr = new FontLibRebuilder().rebuild(enc);
 			enc.saveAsTbl(Conf.outdir+"harvest-boy.tbl");
@@ -44,7 +45,7 @@ public class Hack {
 		}
 	}
 	
-	public static void hackGirl(String excel, String iso) throws IOException {
+	public static void hackGirl(File excel, String iso) throws IOException {
 		try {
 			String exe=Conf.outdir+Conf.GIRL_JP_EXE;
 			Util.copyFile(Conf.girljpdir+Conf.GIRL_JP_EXE, exe);
@@ -55,7 +56,8 @@ public class Hack {
 			bin.split(Conf.girljpdir, splitDir);
 			
 			Encoding enc=new Encoding();
-			new ScriptImporter(enc).importGirl(bin,new File(excel));;
+			new ExeTextImporter(enc).import_(excel,exe);
+			new ScriptImporter(enc).importGirl(bin,excel);;
 			
 			VramImg[] lr = new FontLibRebuilder().rebuild(enc);
 			enc.saveAsTbl(Conf.outdir+"harvest-girl.tbl");

@@ -19,7 +19,9 @@ import common.RscLoader;
 public class GlyphDrawer {
 	
 	public static void main(String[] args) throws IOException {
-		GlyphDrawer g=new GlyphDrawer(Conf.getRawFile("方正像素12.ttf"),0,10);
+//		String font=Conf.desktop+"SourceHanSans-Normal.ttf";
+		String font=Conf.desktop+"方正像素12.ttf";
+		GlyphDrawer g=new GlyphDrawer(font,0,10);
 		BufferedImage img=g.generateGlyph("我");
 		ImageIO.write(img, "bmp", new File(Conf.desktop+"glyph.bmp"));
 	}
@@ -27,6 +29,7 @@ public class GlyphDrawer {
 	public GlyphDrawer(){
 //		this(Conf.getRawFile("Zpix.ttf"), -1,9);
 		this(Conf.getRawFile("方正像素12.ttf"),0,10);
+//		this(Conf.desktop+"华康POP1体W5.ttf",0,10);
 	}
 	
 	Font font;
