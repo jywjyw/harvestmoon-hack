@@ -17,7 +17,7 @@ public class BinSplitPacker {
 	public static void main(String[] args) throws IOException {
 		BinSplitPacker bin = new BinSplitPacker();
 		String splitdir = Conf.desktop+"harvest\\";
-		bin.split(Conf.girljpdir, splitdir);
+		bin.split(Conf.boyjpdir, splitdir);
 //		System.out.println("waiting for modify bin by crystaltile2 ....");
 //		bin.pack(splitdir, Conf.outdir);
 //		IsoPatcher.patch(Conf.outdir, Conf.outdir+"boy_hack.iso");
@@ -43,6 +43,7 @@ public class BinSplitPacker {
 		hdt.close();
 		
 		RandomAccessFile binFile = new RandomAccessFile(new File(binDir+Conf.BIN), "r");
+		System.out.println("splitting bin to "+splitDir);
 		for(int i=0;i<addrs.size()-1;i++){	//最后一个是文件边界
 			binFile.seek(addrs.get(i));
 			int len=addrs.get(i+1)-addrs.get(i);
@@ -57,7 +58,6 @@ public class BinSplitPacker {
 			splitFiles.add(split);
 		}
 		binFile.close();
-		System.out.println("BIN has been splitted to "+splitDir);
 	}
 	
 	public File getFile(int index){

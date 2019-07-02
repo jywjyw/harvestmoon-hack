@@ -28,13 +28,13 @@ picpack起始地址为a0=801c9154,
 0x88处起始,0x52b0大小的图像体数据
 
 紧接着的0x5338处开始是左字库,共21*21=441字
-3byte:图像体大小0x7673
+3byte:图像体压缩后大小0x7673
 1byte:
 4byte:0x380,0 xy
 4byte:3f,fc 宽高63,252
 9a33~9a39处是像素点,9a56~9a5d是像素点,两处中间的点为压缩数据, 和即时存档中的0x2c6340处对比可看到解压后的数据
 
-字库所用色板:(896,254) (944,254)
+字库所用色板:(896,253)(896,254) (944,254)
 (896,252)一整行无图像,可以用来存放4个色板
 
 
@@ -72,9 +72,31 @@ A_FILE.HDT是A_FILE.BIN的索引表,每4字节一组,共36组,将A_FILE.BIN拆�
 2000 PlayStation the Best	Japanese	SLPS 91218
 
 picpack0的大小:
-800bb52c : ORI     00ffffff (a2), 00000000 (r0), d000 (53248),	//a2=pac大小=d000
+800bb52c : ORI     00ffffff (a2), 00000000 (r0), d000 (53248),	//hex:00d00634, 从CD加载到内存时,认定字库所在的pack大小为d000
+C:\Users\Administrator\Desktop\harvest\21 : found!! 2804
+C:\Users\Administrator\Desktop\harvest\21 : found!! 2830
+C:\Users\Administrator\Desktop\harvest\23 : found!! 3D7C
+C:\Users\Administrator\Desktop\harvest\23 : found!! 3DA8
+C:\Users\Administrator\Desktop\harvest\25 : found!! 4084
+C:\Users\Administrator\Desktop\harvest\25 : found!! 40B0
+C:\Users\Administrator\Desktop\harvest\27 : found!! 3898
+C:\Users\Administrator\Desktop\harvest\27 : found!! 38C4
+C:\Users\Administrator\Desktop\harvest\29 : found!! 3320
+C:\Users\Administrator\Desktop\harvest\29 : found!! 334C
+C:\Users\Administrator\Desktop\harvest\31 : found!! 2C9C
+C:\Users\Administrator\Desktop\harvest\31 : found!! 2CDC
 
 picpackD000的定位:
-800bafbc : ORI     0005ed7c (a1), 00000000 (r0), d000 (53248),	//起始位置为d000
+800bafbc : ORI     0005ed7c (a1), 00000000 (r0), d000 (53248),	//hex:00d00634, pack起始位置为d000
 800bafc0 : LUI     00ffffff (a2), 0002 (2),
-800bafc4 : ORI     00020000 (a2), 00020000 (a2), 3000 (12288),	//a2=pac大小=23000
+800bafc4 : ORI     00020000 (a2), 00020000 (a2), 3000 (12288),	//a2=pack大小=23000
+C:\Users\Administrator\Desktop\harvest\31 : found!! 26F0
+C:\Users\Administrator\Desktop\harvest\31 : found!! 2734
+C:\Users\Administrator\Desktop\harvest\32 : found!! F6C
+C:\Users\Administrator\Desktop\harvest\32 : found!! FB0
+
+
+
+======TODO====================
+时间中的冒号,变色时消失
+操作说明中的未选项不显示

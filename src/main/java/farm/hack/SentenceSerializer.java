@@ -28,4 +28,5 @@ public class SentenceSerializer {
 		});
 		return Arrays.copyOfRange(buf.array(), 0, buf.position());
 	}
+	
 }

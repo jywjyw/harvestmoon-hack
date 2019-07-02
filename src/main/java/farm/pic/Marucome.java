@@ -18,7 +18,7 @@ import farm.PicpackOper;
 
 public class Marucome implements PicHandler {
 	@Override
-	public void exportBoy(Picpack p0, Picpack d000, String exportDir) throws IOException {
+	public void exportBoy(File f0, Picpack p0, Picpack d000, String exportDir) throws IOException {
 		export(d000, exportDir, 70, 69);
 	}
 
@@ -65,24 +65,20 @@ public class Marucome implements PicHandler {
 	}
 	
 	public void import_(File f0, Picpack d000, int incInd, int xyPos) throws IOException {
-		try {
-			BufferedImage qr = Qrcode.gen();
-			Palette pal = new Palette(16, Conf.getRawFile("clut/newgame.16"));
-			VramImg vram=Img4bitUtil.toVramImg(qr, new PixelConverter() {
-				@Override
-				public int toPalIndex(int[] pixel) {
-					if(pixel[0]==0)			return 1;
-					else if(pixel[0]==1)	return 15;
-					throw new UnsupportedOperationException();
-				}
-			});
-			ImageIO.write(Img4bitUtil.readRomToBmp(new ByteArrayInputStream(vram.data), vram.w, vram.h, pal), "bmp", new File(Conf.desktop+"qrcode.bmp"));
-			short newX=(short)620, newY=(short)406;
-			d000.modify(incInd, newX,newY, (short)vram.w, (short)vram.h, vram.data);
-			d000.modifyHeadE(xyPos, PicpackOper.buildXYWH(newX,newY,(short)vram.w,(short)vram.h));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		BufferedImage qr = Qrcode.gen();
+		Palette pal = new Palette(16, Conf.getRawFile("clut/newgame.16"));
+		VramImg vram=Img4bitUtil.toVramImg(qr, new PixelConverter() {
+			@Override
+			public int toPalIndex(int[] pixel) {
+				if(pixel[0]==0)			return 1;
+				else if(pixel[0]==1)	return 15;
+				throw new UnsupportedOperationException();
+			}
+		});
+//		ImageIO.write(Img4bitUtil.readRomToBmp(new ByteArrayInputStream(vram.data), vram.w, vram.h, pal), "bmp", new File(Conf.desktop+"qrcode.bmp"));
+		short newX=(short)620, newY=(short)406;
+		d000.modify(incInd, newX,newY, (short)vram.w, (short)vram.h, vram.data);
+		d000.modifyHeadE(xyPos, PicpackOper.buildXYWH(newX,newY,(short)vram.w,(short)vram.h));
 	}
 
 }

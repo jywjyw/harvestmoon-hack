@@ -6,7 +6,7 @@ import java.util.Properties;
 
 public class Conf {
 	
-	public static String boyjpdir,boyendir,girljpdir,girlendir,outdir,desktop;
+	public static String boyjpdir,boyendir,boyiso,girljpdir,girlendir,girliso,desktop;
 	public static final int 
 	SECTOR = 0x800,
 	charW=12,charH=12,	//每个字体宽高
@@ -28,7 +28,8 @@ public class Conf {
 			boyendir = conf.getProperty("boyendir");
 			girljpdir = conf.getProperty("girljpdir");
 			girlendir = conf.getProperty("girlendir");
-			outdir = conf.getProperty("outdir");
+			boyiso = conf.getProperty("boyiso");
+			girliso = conf.getProperty("girliso");
 			desktop= conf.getProperty("desktop");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -48,17 +49,15 @@ public class Conf {
 		return System.getProperty("user.dir")+File.separator+"raw"+File.separator+rawFile;
 	}
 	
-	public static String getTranslateFile(String file){
-		return System.getProperty("user.dir")+File.separator+"translation"+File.separator+file;
-	}
-	
-	
 	public static int getExeOffset(int memAddr){
 		return memAddr-0x8000f800;
 	}
 	
 	public static int getExeAddr(int offset){
 		return 0x8000f800+offset;
+	}
+	public static void main(String[] args) {
+		System.out.println(Integer.toHexString(getExeAddr(0x461a2)));
 	}
 
 }

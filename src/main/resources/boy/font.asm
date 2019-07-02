@@ -26,7 +26,7 @@ sh t0,10(sp)	//move screen.y to another addr
 addu s4,a1,r0	
 addiu v0,r0,4
 sb v0,3(s4)		//??
-addiu v0,r0,64
+addiu v0,r0,64	//define sprite code, 64=sprite, 66=semiTransparentSprite
 sb v0,7(s4)		//save sprite code
 
 

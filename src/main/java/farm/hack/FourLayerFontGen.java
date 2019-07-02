@@ -40,7 +40,7 @@ public class FourLayerFontGen {
 				}else if(pixel[0]==WHITE[0]){ //背景色
 					ret.addPixelIndex(last);
 				}else{
-					throw new RuntimeException();
+					throw new RuntimeException("unreconized color");
 				}
 			}
 		}

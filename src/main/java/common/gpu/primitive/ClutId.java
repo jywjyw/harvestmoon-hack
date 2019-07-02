@@ -28,7 +28,7 @@ public class ClutId {
 		return String.format("(%d,%d)", x,y);
 	}
 	public static void main(String[] args) {
-		System.out.println(Util.hexEncode(new ClutId(944,252).toBytes()));
+		System.out.println(Util.hexEncode(new ClutId(896,253).toBytes()));
 		System.out.println(Util.hexEncode(new ClutId(368,496).toBytes()));
 		System.out.println(new ClutId((short) 0x7615));
 	}

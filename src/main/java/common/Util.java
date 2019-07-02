@@ -1,6 +1,7 @@
 package common;
 
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -15,6 +16,8 @@ import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 
 public class Util {
@@ -294,6 +297,30 @@ public class Util {
 				System.out.println(new String(new byte[]{(byte) a,(byte) b},"gbk"));
 			}
 		}
+	}
+	
+	/**
+	 * 竖向拼接2个同样宽度的图片
+	 * @param src1F
+	 * @param src2F
+	 * @return
+	 * @throws IOException
+	 */
+	public static BufferedImage join2Pic(File src1F, File src2F) throws IOException{
+		BufferedImage src1=ImageIO.read(src1F);
+		BufferedImage src2=ImageIO.read(src2F);
+		BufferedImage target=new BufferedImage(src1.getWidth(), src1.getHeight()+src2.getHeight(), src1.getType());
+		for(int y=0;y<src1.getHeight();y++){
+			for(int x=0;x<src1.getWidth();x++){
+				target.setRGB(x,y,src1.getRGB(x, y));
+			}
+		}
+		for(int y=0;y<src2.getHeight();y++){
+			for(int x=0;x<src2.getWidth();x++){
+				target.setRGB(x,y+src1.getHeight(),src2.getRGB(x, y));
+			}
+		}
+		return target;
 	}
 	
 	public static void main(String[] args) {

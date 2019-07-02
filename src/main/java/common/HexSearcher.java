@@ -14,10 +14,7 @@ public class HexSearcher {
 	public static void main(String[] args) throws IOException {
 		String dir = Conf.desktop+"harvest\\";
 		System.out.println("searching...");
-		HexSearcher.searchDir(dir, "00d00634d855000c", null);
-//		HexSearcher.searchDir(dir, "00d005340200063c", null);
-//		HexSearcher.searchDir(dir, "00d005340200063c0030c634", null);
-//		HexSearcher.searchDir(dir, "00d006341000a3af", null);
+		HexSearcher.searchDir(dir, "00910078008c", null);
 		
 		System.out.println("finish...");
 	}

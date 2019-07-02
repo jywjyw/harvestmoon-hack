@@ -3,6 +3,7 @@ package farm.pic;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -13,13 +14,17 @@ import com.google.zxing.qrcode.QRCodeWriter;
 
 public class Qrcode  {
 
-	public static BufferedImage gen() throws Exception {
+	public static BufferedImage gen() throws IOException  {
 //		String qr = "wxp://f2f0cL69ygoPrp2qOOwjYcAfhHHF49F9p2lE";
 		String qr="https://qr.alipay.com/fkx02916kdtaoovuhh6n425";
 		int w=40, h=1;
-		BitMatrix bitMatrix = new QRCodeWriter().encode(qr, BarcodeFormat.QR_CODE, w, h);
-		ByteArrayOutputStream png = new ByteArrayOutputStream();
-		MatrixToImageWriter.writeToStream(bitMatrix, "png", png);
-		return ImageIO.read(new ByteArrayInputStream(png.toByteArray()));
+		try {
+			BitMatrix bitMatrix = new QRCodeWriter().encode(qr, BarcodeFormat.QR_CODE, w, h);
+			ByteArrayOutputStream png = new ByteArrayOutputStream();
+			MatrixToImageWriter.writeToStream(bitMatrix, "png", png);
+			return ImageIO.read(new ByteArrayInputStream(png.toByteArray()));
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 	}
 }

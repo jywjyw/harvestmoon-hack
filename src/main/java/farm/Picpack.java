@@ -66,7 +66,7 @@ public class Picpack {
 			System.err.println("是否压缩后的数据超出了范围");
 			throw new RuntimeException(e);
 		}
-		System.out.println("picpack real len="+Integer.toHexString(ret.position()));
+//		System.out.println("picpack real len="+Integer.toHexString(ret.position()));
 		return ret.array();
 	}
 

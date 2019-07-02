@@ -18,7 +18,7 @@ import farm.PicpackOper;
 public class Newgame implements PicHandler {
 
 	@Override
-	public void exportBoy(Picpack p0, Picpack d000, String exportDir) throws IOException {
+	public void exportBoy(File f0, Picpack p0, Picpack d000, String exportDir) throws IOException {
 		export(d000, exportDir, 34);
 	}
 	

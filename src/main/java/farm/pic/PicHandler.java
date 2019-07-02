@@ -7,7 +7,7 @@ import farm.Picpack;
 
 public interface PicHandler {
 	
-	void exportBoy(Picpack p0, Picpack d000, String exportDir) throws IOException;
+	void exportBoy(File f0, Picpack p0, Picpack d000, String exportDir) throws IOException;
 	void exportGirl(Picpack p0, Picpack d000, String exportDir) throws IOException;
 	
 	void importBoy(File f0, Picpack d000) throws IOException;

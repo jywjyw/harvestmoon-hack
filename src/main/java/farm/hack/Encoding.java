@@ -6,16 +6,18 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import common.Conf;
 import common.RscLoader;
 import common.RscLoader.Callback;
 
@@ -95,10 +97,18 @@ public class Encoding {
 		fillGBK();	//fill to max
 		Map<Integer,Char> map = buildSortedKv();
 		GlyphDrawer glyphDrawer = new GlyphDrawer();
+		Set<String> unsupport=new HashSet<>();
 		for(Entry<Integer,Char> e:map.entrySet()){
 			if(e.getKey()<=0x0c00){
-				e.getValue().glyph = glyphDrawer.generateGlyph(e.getValue().ch);
+				if(glyphDrawer.canSupport(e.getValue().ch)){
+					e.getValue().glyph = glyphDrawer.generateGlyph(e.getValue().ch);
+				} else {
+					unsupport.add(e.getValue().ch);
+				}
 			}
+		}
+		if(!unsupport.isEmpty()){
+			throw new UnsupportedOperationException("字库不支持以下字符: "+Arrays.deepToString(unsupport.toArray()));
 		}
 		return map;
 	}
