@@ -5,3 +5,8 @@ Serial:SLPS-02489
   
 [Farm Story - Harvest Moon] Chinese translation project    
 Not finished yet.
+
+
+
+tips:
+* Missing a large file "/raw/simsun.ttc", download by yourself.

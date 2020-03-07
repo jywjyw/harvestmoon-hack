@@ -53,7 +53,9 @@ public class ScriptImporter {
 	}
 	
 	public void importGirl(BinSplitPacker bin, File excel) throws IOException{
-		importBoy(bin, excel);
+		
+		importBoy(bin, excel);	//import excel sheet 2,3,4,5,6
+		
 		final int fileIndex=12;
 		final RandomAccessFile file = new RandomAccessFile(bin.getFile(fileIndex), "rw");
 		new ExcelParser(excel).parse(fileIndex+"", 1, new RowCallback() {

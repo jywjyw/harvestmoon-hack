@@ -16,8 +16,8 @@ public class FloatTextImporter {
 		this.enc = enc;
 	}
 
-	public void import_(File excel, File exe, String sheet) throws IOException{
-		final RandomAccessFile file = new RandomAccessFile(exe, "rw");
+	public void import_(File excel, File targetFile, String sheet) throws IOException{
+		final RandomAccessFile file = new RandomAccessFile(targetFile, "rw");
 		final List<String> error=new ArrayList<>();
 		new ExcelParser(excel).parse(sheet, 2, new RowCallback() {
 			@Override

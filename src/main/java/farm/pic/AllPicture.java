@@ -52,7 +52,7 @@ public class AllPicture  {
 		
 		new Continue().importBoy(f0, d000);
 		new Logo().importBoy(f0, d000);
-		new Marucome().importBoy(f0, d000);
+//		new Marucome().importBoy(f0, d000);	//TODO 此处用来控制二维码的显示
 		new Newgame().importBoy(f0, d000);
 		new Start().importBoy(f0, d000);
 		new Here().importBoy(f0,d000);
@@ -112,7 +112,7 @@ public class AllPicture  {
 		
 		new Continue().importGirl(f0, d000);
 		new Logo().importGirl(f0, d000);
-		new Marucome().importGirl(f0, d000);
+//		new Marucome().importGirl(f0, d000);	//TODO 此处用来控制二维码的显示
 		new Newgame().importGirl(f0, d000);
 		new Start().importGirl(f0, d000);
 //		new Victor().importGirl(f0, d000);

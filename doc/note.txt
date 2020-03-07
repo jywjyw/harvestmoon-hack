@@ -97,6 +97,15 @@ C:\Users\Administrator\Desktop\harvest\32 : found!! FB0
 
 
 
+========== cli客户端打包目录结构 ========================
++
+ + bin(iso解包后的三个文件)
+ + raw
+ - 开始运行.cmd
+ - harvestmoon.iso
+ - *.xlsx
 ======TODO====================
 时间中的冒号,变色时消失
 操作说明中的未选项不显示
+动物比赛时,其它选手名字乱码
+PSP/PSV,选调料盒死机

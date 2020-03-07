@@ -88,8 +88,8 @@ public class ExcelParser {
 		try	{
 			while (true) {
 				Row row = sheet.getRow(rowNum);
-				if (row == null){
-					break;	//遇到空白行, 则读取完成
+				if (row == null || row.getCell(0)==null){	//遇到空白行, 则读取完成
+					break;	
 				}
 				
 				List<String> columns = new ArrayList<String>();
@@ -101,7 +101,7 @@ public class ExcelParser {
 				rowNum++;
 			}
 		} catch(Exception e)	{
-			throw new RuntimeException(String.format("第%d行第%d列错误: %s", rowNum+1, cell, e.getMessage()), e);
+			throw new RuntimeException(String.format("工作表%s第%d行第%d列错误: %s", sheet.getSheetName(), rowNum, cell+1, e.getMessage()), e);
 		} finally	{
 			try {
 				is.close();

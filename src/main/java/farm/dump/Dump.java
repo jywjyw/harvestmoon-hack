@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -11,12 +12,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import common.Conf;
 import common.Util;
 import farm.BinSplitPacker;
+import farm.FloatText;
 import farm.pic.AllPicture;
 
 public class Dump {
 	
 	public static void main(String[] args) throws IOException {
-		dumpBoyJp();
+//		dumpBoyJp();
 //		dumpBoyEn();
 		dumpGirlJp();
 //		dumpGirlEn();
@@ -28,8 +30,14 @@ public class Dump {
 		
 		Charset cs = new Charset("charset_jp.gbk");
 		XSSFWorkbook excel=new XSSFWorkbook();
-		FloatTextExporter.export(new FloatTextReader(0x443f4, 0x46a0c).read(cs, new File(Conf.boyjpdir+Conf.BOY_JP_EXE)),excel,"EXE");
-		FloatTextExporter.export(new FloatTextReader(0x77aa4, 0x77b1a).read(cs, bin.getFile(11)),excel,"11");
+		List<FloatText> tExe=new ArrayList<>();
+		tExe.addAll(new FloatTextReader(0x443f4, 0x46a0c).read(cs, new File(Conf.boyjpdir+Conf.BOY_JP_EXE)));
+		tExe.addAll(new FloatTextReader(0x474fc, 0x47716).read(cs, new File(Conf.boyjpdir+Conf.BOY_JP_EXE)));
+		FloatTextExporter.export(tExe,excel,"EXE");
+		List<FloatText> t11=new ArrayList<>();
+		t11.addAll(new FloatTextReader(0x77908, 0x7792e).read(cs, bin.getFile(11)));
+		t11.addAll(new FloatTextReader(0x77aa4, 0x77b1a).read(cs, bin.getFile(11)));
+		FloatTextExporter.export(t11,excel,"11");
 		FloatTextExporter.export(new FloatTextReader(0x3f50, 0x3fee).read(cs, bin.getFile(21)),excel,"21");
 		FloatTextExporter.export(new FloatTextReader(0x571c, 0x57d6).read(cs, bin.getFile(23)),excel,"23");
 		FloatTextExporter.export(new FloatTextReader(0x6140, 0x61b0).read(cs, bin.getFile(25)),excel,"25");
@@ -48,7 +56,10 @@ public class Dump {
 		
 		Charset cs = new Charset("charset_en.gbk");
 		XSSFWorkbook excel=new XSSFWorkbook();
-		FloatTextExporter.export(new FloatTextReader(0x41f5c, 0x453ba).read(cs, new File(Conf.boyendir+Conf.BOY_EN_EXE)),excel,"EXE");
+		List<FloatText> tExe=new ArrayList<>();
+		tExe.addAll(new FloatTextReader(0x41f5c, 0x453ba).read(cs, new File(Conf.boyendir+Conf.BOY_EN_EXE)));
+		tExe.addAll(new FloatTextReader(0x45ea8, 0x460a2).read(cs, new File(Conf.boyendir+Conf.BOY_EN_EXE)));
+		FloatTextExporter.export(tExe,excel,"EXE");
 		new ScriptMultilineExporter().exportExcel(bin, cs, excel);
 		saveExcel(excel, Conf.desktop+"boy-en.xlsx");
 		System.out.println("dump complete");
@@ -60,7 +71,10 @@ public class Dump {
 		
 		Charset cs = new Charset("charset_jp.gbk");
 		XSSFWorkbook excel=new XSSFWorkbook();
-		FloatTextExporter.export(new FloatTextReader(0x443f4, 0x46a0c).read(cs, new File(Conf.girljpdir+Conf.GIRL_JP_EXE)),excel,"EXE");
+		List<FloatText> tExe=new ArrayList<>();
+		tExe.addAll(new FloatTextReader(0x443f4, 0x46a0c).read(cs, new File(Conf.girljpdir+Conf.GIRL_JP_EXE)));
+		tExe.addAll(new FloatTextReader(0x46e54, 0x47078).read(cs, new File(Conf.girljpdir+Conf.GIRL_JP_EXE)));
+		FloatTextExporter.export(tExe,excel,"EXE");
 		FloatTextExporter.export(new FloatTextReader(0x71cf0, 0x71d66).read(cs, bin.getFile(11)),excel,"11");
 		FloatTextExporter.export(new FloatTextReader(0x3798, 0x382a).read(cs, bin.getFile(17)),excel,"17");
 		FloatTextExporter.export(new FloatTextReader(0x4f38, 0x500a).read(cs, bin.getFile(20)),excel,"20");
