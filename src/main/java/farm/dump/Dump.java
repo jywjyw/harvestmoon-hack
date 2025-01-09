@@ -72,7 +72,7 @@ public class Dump {
 		Charset cs = new Charset("charset_jp.gbk");
 		XSSFWorkbook excel=new XSSFWorkbook();
 		List<FloatText> tExe=new ArrayList<>();
-		tExe.addAll(new FloatTextReader(0x443f4, 0x46a0c).read(cs, new File(Conf.girljpdir+Conf.GIRL_JP_EXE)));
+		tExe.addAll(new FloatTextReader(0x43D18, 0x46a0c).read(cs, new File(Conf.girljpdir+Conf.GIRL_JP_EXE)));
 		tExe.addAll(new FloatTextReader(0x46e54, 0x47078).read(cs, new File(Conf.girljpdir+Conf.GIRL_JP_EXE)));
 		FloatTextExporter.export(tExe,excel,"EXE");
 		FloatTextExporter.export(new FloatTextReader(0x71cf0, 0x71d66).read(cs, bin.getFile(11)),excel,"11");

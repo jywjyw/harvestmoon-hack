@@ -13,7 +13,7 @@ import farm.pic.AllPicture;
 public class Hack {
 	
 	public static void main(String[] args) throws IOException {
-		String excel="C:\\Users\\lenovo\\Documents\\Tencent Files\\329682470\\FileRecv\\girl-jp1.xlsx";
+		String excel="C:\\Users\\lenovo\\Desktop\\girl-jp(1).xlsx";
 //		String excel="D:\\workspace1\\harvestmoon-hack\\translation\\girl-jp.xlsx";
 //		hackBoy(new File(excel), Conf.boyjpdir, Conf.desktop+"harvest\\", Conf.boyiso);
 		hackGirl(new File(excel), Conf.girljpdir, Conf.desktop+"harvest\\", Conf.girliso);

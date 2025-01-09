@@ -33,7 +33,14 @@ public class Cli {
 		Scanner scan = new Scanner(System.in);
 		int selIndex=Integer.parseInt(scan.nextLine())-1;
 		scan.close();
-		String splitDir=System.getProperty("java.io.tmpdir")+"harvestmoongirlsplit"+File.separator;
+		
+		String tempDir = "__temp";
+		File tempDirFile = new File(System.getProperty("user.dir"), tempDir);
+		if(tempDirFile.exists())
+			tempDirFile.delete();
+		tempDirFile.mkdir();
+		String splitDir = tempDirFile.toString()+File.separator;
+//		String splitDir=System.getProperty("java.io.tmpdir")+"harvestmoongirlsplit"+File.separator;
 //		Hack.hackBoy(excels[selIndex], dir+"bin"+File.separator, splitDir, dir+"harvestmoon.iso");
 		Hack.hackGirl(excels[selIndex], dir+"bin"+File.separator, splitDir, dir+"harvestmoon.iso");
 	}
